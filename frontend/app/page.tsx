@@ -76,10 +76,10 @@ export default function Home() {
         style={{ backgroundImage: "url('/home_background.png')" }}
       >
         <div className="absolute top-6 right-6 flex items-center gap-4">
-          <button className="bg-[#839b88] hover:bg-[#728877] text-white px-6 py-2 rounded-md font-medium shadow transition-colors">
+          <button className="bg-[#839b88] hover:bg-[#728877] text-white px-6 py-2 rounded-md font-medium shadow transition-colors cursor-pointer">
             Login
           </button>
-          <button className="bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-md shadow flex items-center justify-center font-bold text-lg w-10 h-10 transition-colors">
+          <button className="bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-md shadow flex items-center justify-center font-bold text-lg w-10 h-10 transition-colors cursor-pointer">
             <span className="text-[#DB4437]">G</span>
           </button>
         </div>
@@ -92,12 +92,19 @@ export default function Home() {
             This is a cognitive assessment to explore your personality preferences and psychologoecological preference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
-            <button className="flex-1 bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center">
+            <a 
+              href="/modules-test" 
+              className="flex-1 bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center"
+            >
               Try the test?
-            </button>
-            <button className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300 py-3 rounded-md text-lg font-bold shadow-sm transition-colors uppercase tracking-wider text-center">
+            </a>
+            
+            <a 
+              href="/result-history" 
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300 py-3 rounded-md text-lg font-bold shadow-sm transition-colors uppercase tracking-wider text-center"
+            >
               View All Results
-            </button>
+            </a>
           </div>
         </div>
       </main>
@@ -110,9 +117,9 @@ export default function Home() {
           &#10094;
         </button>
 
-        <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center animate-in fade-in duration-500">
+        <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center animate-in fade-in duration-500 ">
           {visibleCards.map((card) => (
-            <div key={card.id} className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col">
+            <div key={card.id} className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col cursor-pointer">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-2xl font-serif font-bold text-gray-900">{card.type}</h3>
                 <span className="text-xl">{card.icon}</span>
