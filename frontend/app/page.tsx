@@ -1,65 +1,136 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import Footer from "./components/footer";
+// Import the mock data schema
+import { mbtiProfiles } from "./libs/mockMBTI";
 
 export default function Home() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cardsToShow, setCardsToShow] = useState(() => {
+    if (typeof window !== "undefined") {
+      const width = window.innerWidth;
+      if (width >= 1440) return 4;
+      if (width >= 1024) return 3;
+      if (width >= 768) return 2;
+      return 1;
+    }
+    return 4; // default for SSR (largest breakpoint)
+  });
+
+  const handleNext = () => {
+    if (currentIndex + cardsToShow < mbtiProfiles.length) {
+      setCurrentIndex((prev) => prev + cardsToShow);
+    } else {
+      setCurrentIndex(0); // Wrap around to the start on manual click if at the end
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - cardsToShow);
+    } else {
+      // Go to the last possible page
+      const remainder = mbtiProfiles.length % cardsToShow;
+      const lastIndex = remainder === 0
+        ? mbtiProfiles.length - cardsToShow
+        : mbtiProfiles.length - remainder;
+      setCurrentIndex(lastIndex);
+    }
+  };
+
+  // Update cardsToShow on window resize for responsiveness
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      if (w >= 1440) setCardsToShow(4);
+      else if (w >= 1024) setCardsToShow(3);
+      else if (w >= 768) setCardsToShow(2);
+      else setCardsToShow(1);
+    };
+    window.addEventListener("resize", handleResize);
+    // Initialise on mount
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => {
+        if (prev + cardsToShow < mbtiProfiles.length) {
+          return prev + cardsToShow;
+        } else {
+          return 0;
+        }
+      });
+    }, 8000);
+    return () => clearInterval(timer);
+  }, [cardsToShow]);
+
+  const visibleCards = mbtiProfiles.slice(currentIndex, currentIndex + cardsToShow);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen flex-col font-sans bg-[#f2f4f3] text-gray-900">
+      <main
+        className="relative flex flex-col items-center justify-center flex-1 w-full bg-cover bg-center bg-no-repeat min-h-[60vh] pb-12 pt-24"
+        style={{ backgroundImage: "url('/home_background.png')" }}
+      >
+        <div className="absolute top-6 right-6 flex items-center gap-4">
+          <button className="bg-[#839b88] hover:bg-[#728877] text-white px-6 py-2 rounded-md font-medium shadow transition-colors">
+            Login
+          </button>
+          <button className="bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-md shadow flex items-center justify-center font-bold text-lg w-10 h-10 transition-colors">
+            <span className="text-[#DB4437]">G</span>
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="flex flex-col items-center text-center px-4 max-w-3xl mt-12">
+          <h1 className="text-5xl md:text-7xl font-serif text-[#1e231f] tracking-wide mb-4">
+            MBTI TEST
+          </h1>
+          <p className="text-lg md:text-xl text-gray-500 font-medium mb-8 max-w-xl">
+            This is a cognitive assessment to explore your personality preferences and psychologoecological preference.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
+            <button className="flex-1 bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center">
+              Try the test?
+            </button>
+            <button className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300 py-3 rounded-md text-lg font-bold shadow-sm transition-colors uppercase tracking-wider text-center">
+              View All Results
+            </button>
+          </div>
         </div>
       </main>
+
+      <section className="bg-[#f0f2f5] py-10 px-4 relative flex items-center justify-center flex-shrink-0 min-h-[280px] overflow-hidden">
+        <button
+          onClick={handlePrev}
+          className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow-md text-xl z-20 transition-colors bg-white hover:bg-gray-100 text-gray-700 cursor-pointer"
+        >
+          &#10094;
+        </button>
+
+        <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center animate-in fade-in duration-500">
+          {visibleCards.map((card) => (
+            <div key={card.id} className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-2xl font-serif font-bold text-gray-900">{card.type}</h3>
+                <span className="text-xl">{card.icon}</span>
+              </div>
+              <h4 className="text-sm font-medium text-gray-800 mb-2">{card.title}</h4>
+              <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={handleNext}
+          className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full shadow-md text-xl z-20 transition-colors bg-white hover:bg-gray-100 text-gray-700 cursor-pointer"
+        >
+          &#10095;
+        </button>
+      </section>
+      <Footer />
     </div>
   );
 }

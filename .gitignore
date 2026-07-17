@@ -3,3 +3,7 @@ package-lock.json
 Agents.md
 Claude.md
 Gemini.md
+venv
+.env
+.graphify
+graphify-out
