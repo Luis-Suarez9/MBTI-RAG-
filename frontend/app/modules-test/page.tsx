@@ -44,9 +44,11 @@ export default function ModuleTestPage() {
   
   // State to store answers. Key format: `page-questionIndex`
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [validationMessage, setValidationMessage] = useState('');
 
   const currentModule = modulesData[currentPage - 1];
   const currentQuestions = getQuestionsForPage(currentPage);
+  const isCurrentPageComplete = currentQuestions.every((_, idx) => typeof answers[`${currentPage}-${idx}`] === 'number');
 
   // Handle bubble click
   const handleAnswerChange = (questionIndex: number, value: number) => {
@@ -54,12 +56,19 @@ export default function ModuleTestPage() {
       ...prev,
       [`${currentPage}-${questionIndex}`]: value,
     }));
+    setValidationMessage('');
   };
 
   // Handle Next Page / Submit
   const handleNext = () => {
+    if (!isCurrentPageComplete) {
+      setValidationMessage('Please answer all questions on this page before continuing.');
+      return;
+    }
+
     if (currentPage < 8) {
       setCurrentPage((prev) => prev + 1);
+      setValidationMessage('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       // If on the last page, route to the results page
@@ -102,6 +111,10 @@ export default function ModuleTestPage() {
         
         {/* Page Indicator */}
         <p className="text-gray-800 font-medium mb-8">Page {currentPage} of 8</p>
+
+        {validationMessage ? (
+          <p className="mb-4 text-sm font-medium text-red-600">{validationMessage}</p>
+        ) : null}
 
         {/* Questions Container */}
         <div className="w-full max-w-4xl flex flex-col gap-6">
@@ -184,7 +197,12 @@ export default function ModuleTestPage() {
 
           <button 
             onClick={handleNext}
-            className="bg-[#788f7b] text-white px-8 py-3 rounded-lg shadow-md hover:bg-[#637766] transition-colors flex items-center gap-2 font-medium text-lg cursor-pointer"
+            disabled={!isCurrentPageComplete}
+            className={`px-8 py-3 rounded-lg shadow-md transition-colors flex items-center gap-2 font-medium text-lg ${
+              isCurrentPageComplete
+                ? 'bg-[#788f7b] text-white hover:bg-[#637766] cursor-pointer'
+                : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+            }`}
           >
             {currentPage === 8 ? 'Submit Results' : 'Next Page'} 
             {currentPage < 8 && <span className="text-xl leading-none">›</span>}

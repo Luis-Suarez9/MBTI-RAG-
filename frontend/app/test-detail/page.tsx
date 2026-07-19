@@ -2,7 +2,17 @@ import AccountButton from '../components/accountButton'; // Adjust path if neede
 import Footer from '../components/footer'; // Adjust path if needed
 
 // Mock data for the traits bars
-const traitsData = [
+interface Trait {
+  id: number;
+  label1: string;
+  val1: number;
+  label2: string;
+  val2: number;
+  color1: string;
+  color2: string;
+}
+
+const traitsData: Trait[] = [
   { 
     id: 1, label1: 'MIND: E (Extraverted)', val1: 25, 
     label2: 'I (Introverted)', val2: 75, 
@@ -30,7 +40,7 @@ export default function TestDetailPage() {
     <div className="min-h-screen flex flex-col font-sans bg-[#f2f4f1]">
       {/* Upper Section with Background Image */}
       <div
-        className="relative w-full h-[60vh] flex flex-col"
+        className="relative w-full min-h-[60vh] h-auto pb-12 flex flex-col"
         style={{
           backgroundImage: "url('/home_background.png')",
           backgroundSize: 'cover',
@@ -44,39 +54,55 @@ export default function TestDetailPage() {
         </header>
 
         {/* Title and Main Result Card */}
-        <div className="flex-grow flex flex-col items-center justify-center -mt-8 px-4">
-          <h1 className="text-4xl md:text-5xl font-serif text-black tracking-wide mb-6 text-center shadow-sm">
+        {/* FIX: Changed to items-center pt-12 (removed negative margins) to lower the card */}
+        <div className="flex-grow flex flex-col items-center pt-8 md:pt-12 px-4">
+          <h1 className="text-3xl md:text-5xl font-serif text-black tracking-wide mb-10 text-center shadow-sm">
             YOUR MBTI TEST RESULTS
           </h1>
 
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl p-8">
-            <h2 className="text-2xl font-serif text-center mb-8 text-black">
+          {/* FIX: Changed max-w-4xl to max-w-2xl to make the card narrower */}
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-5 md:p-8">
+            <h2 className="text-xl md:text-2xl font-serif text-center mb-8 text-black">
               YOUR TYPE: INFJ - THE ADVOCATE
             </h2>
 
-            {/* Trait Progress Bars */}
-            <div className="flex flex-col gap-5">
+            {/* Trait Progress Bars - Refactored for Mobile Responsiveness */}
+            <div className="flex flex-col gap-6 md:gap-5 w-full">
               {traitsData.map((trait) => (
-                <div key={trait.id} className="flex items-center justify-center text-sm font-medium text-gray-800">
-                  {/* Left Trait */}
-                  <div className="w-48 text-right pr-3">{trait.label1}</div>
+                <div key={trait.id} className="w-full flex flex-col md:flex-row items-center justify-center text-sm font-medium text-gray-800">
                   
-                  {/* Left Progress Bar (Fills from right to left) */}
-                  <div className="w-24 h-[10px] bg-gray-200 relative flex justify-end">
-                    <div className={`h-full ${trait.color1}`} style={{ width: `${trait.val1}%` }}></div>
+                  {/* Mobile Labels (Visible only on small screens) */}
+                  <div className="flex md:hidden justify-between w-full text-xs mb-2 text-gray-700">
+                    <span className="text-left flex-1 pr-2">{trait.label1} <br/> <span className="text-gray-500 font-normal">[{trait.val1}%]</span></span>
+                    <span className="text-right flex-1 pl-2">{trait.label2} <br/> <span className="text-gray-500 font-normal">[{trait.val2}%]</span></span>
                   </div>
-                  <div className="w-12 text-left pl-2">{trait.val1}%]</div>
 
-                  {/* VS Divider */}
-                  <div className="text-center w-12 text-gray-500 font-normal">- vs -</div>
-
-                  {/* Right Trait */}
-                  <div className="w-24 h-[10px] bg-gray-200 relative flex justify-start">
-                    <div className={`h-full ${trait.color2}`} style={{ width: `${trait.val2}%` }}></div>
+                  {/* Desktop Left Label */}
+                  <div className="hidden md:block w-2/5 text-right pr-4">
+                    {trait.label1} <span className="text-gray-500 font-normal ml-1">[{trait.val1}%]</span>
                   </div>
-                  <div className="w-10 text-right pr-2">[{trait.val2}%</div>
                   
-                  <div className="w-48 text-left pl-3">{trait.label2}</div>
+                  {/* Progress Bars Container */}
+                  <div className="w-full md:w-1/5 flex items-center justify-center">
+                    {/* Left Progress Bar */}
+                    <div className="w-1/2 h-[10px] bg-gray-200 relative flex justify-end rounded-l-sm overflow-hidden">
+                      <div className={`h-full ${trait.color1}`} style={{ width: `${trait.val1}%` }}></div>
+                    </div>
+
+                    {/* VS Divider */}
+                    <div className="text-center w-10 md:w-12 text-gray-400 font-normal text-xs md:text-sm">-vs-</div>
+
+                    {/* Right Progress Bar */}
+                    <div className="w-1/2 h-[10px] bg-gray-200 relative flex justify-start rounded-r-sm overflow-hidden">
+                      <div className={`h-full ${trait.color2}`} style={{ width: `${trait.val2}%` }}></div>
+                    </div>
+                  </div>
+                  
+                  {/* Desktop Right Label */}
+                  <div className="hidden md:block w-2/5 text-left pl-4">
+                    <span className="text-gray-500 font-normal mr-1">[{trait.val2}%]</span> {trait.label2}
+                  </div>
+                  
                 </div>
               ))}
             </div>

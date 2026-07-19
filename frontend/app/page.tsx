@@ -92,15 +92,15 @@ export default function Home() {
             This is a cognitive assessment to explore your personality preferences and psychologoecological preference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
-            <a 
-              href="/modules-test" 
+            <a
+              href="/modules-test"
               className="flex-1 bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center"
             >
               Try the test?
             </a>
-            
-            <a 
-              href="/result-history" 
+
+            <a
+              href="/result-history"
               className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300 py-3 rounded-md text-lg font-bold shadow-sm transition-colors uppercase tracking-wider text-center"
             >
               View All Results
@@ -119,14 +119,16 @@ export default function Home() {
 
         <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center animate-in fade-in duration-500 ">
           {visibleCards.map((card) => (
-            <div key={card.id} className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col cursor-pointer">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-2xl font-serif font-bold text-gray-900">{card.type}</h3>
-                <span className="text-xl">{card.icon}</span>
+            <a href="/MBTI-explain" key={card.id}>
+              <div className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col cursor-pointer">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-2xl font-serif font-bold text-gray-900">{card.type}</h3>
+                  <span className="text-xl">{card.icon}</span>
+                </div>
+                <h4 className="text-sm font-medium text-gray-800 mb-2">{card.title}</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
               </div>
-              <h4 className="text-sm font-medium text-gray-800 mb-2">{card.title}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
-            </div>
+            </a>
           ))}
         </div>
 

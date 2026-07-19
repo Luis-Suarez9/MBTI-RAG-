@@ -10,6 +10,11 @@ const mockHistory = [
   { id: 2, date: '03 Aug 2023', result: 'ENFP - The Campaigner' },
   { id: 3, date: '21 May 2023', result: 'ISTP - The Virtuoso' },
   { id: 4, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 5, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
 ];
 
 export default function ResultHistoryPage() {
@@ -38,34 +43,36 @@ export default function ResultHistoryPage() {
           </h1>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-gray-300">
-                  <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
-                    DATE COMPLETE
-                  </th>
-                  <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
-                    MBTI RESULT
-                  </th>
-                  <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
-                    ACTION
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockHistory.map((item) => (
-                  <tr key={item.id} className="border-b border-gray-100 last:border-0">
-                    <td className="py-5 text-gray-800 font-medium">{item.date}</td>
-                    <td className="py-5 text-gray-800 font-medium">{item.result}</td>
-                    <td className="py-5">
-                      <a href="/test-detail" className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors">
-                        VIEW DETAIL
-                      </a>
-                    </td>
+            <div className="max-h-[22rem] overflow-y-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="sticky top-0 z-10 bg-white">
+                  <tr className="border-b border-gray-300">
+                    <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
+                      DATE COMPLETE
+                    </th>
+                    <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
+                      MBTI RESULT
+                    </th>
+                    <th className="py-4 text-sm font-semibold text-gray-700 tracking-wider">
+                      ACTION
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {mockHistory.map((item) => (
+                    <tr key={item.id} className="border-b border-gray-100 last:border-0">
+                      <td className="py-5 text-gray-800 font-medium">{item.date}</td>
+                      <td className="py-5 text-gray-800 font-medium">{item.result}</td>
+                      <td className="py-5">
+                        <a href="/test-detail" className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors">
+                          VIEW DETAIL
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </main>
