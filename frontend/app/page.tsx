@@ -117,16 +117,17 @@ export default function Home() {
           &#10094;
         </button>
 
-        <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center animate-in fade-in duration-500 ">
+        <div key={currentIndex} className="flex gap-6 px-20 py-4 max-w-full w-full justify-center items-stretch animate-in fade-in duration-500">
           {visibleCards.map((card) => (
-            <a href="/MBTI-explain" key={card.id}>
-              <div className="bg-white w-64 min-h-[160px] rounded-xl p-5 shadow-sm flex-shrink-0 border border-gray-100 flex flex-col cursor-pointer">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-2xl font-serif font-bold text-gray-900">{card.type}</h3>
-                  <span className="text-xl">{card.icon}</span>
+            <a href={`/MBTI-explain/${card.id}`} key={card.id} className="flex-shrink-0 flex w-72 items-stretch">
+              <div className="bg-white w-full rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col justify-start cursor-pointer">
+                <div>
+                  <h3 className="text-2xl font-serif font-bold text-gray-900 mb-2">{card.type}</h3>
+                  <h4 className="text-sm font-medium text-gray-800 mb-3 leading-snug">{card.title}</h4>
                 </div>
-                <h4 className="text-sm font-medium text-gray-800 mb-2">{card.title}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
+                <div>
+                  <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
+                </div>
               </div>
             </a>
           ))}
