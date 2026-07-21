@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Footer from "./components/footer";
+import AuthHeaderControl from "./components/accountButton";
 // Import the mock data schema
 import { mbtiProfiles } from "./libs/mockMBTI";
 
@@ -75,14 +76,7 @@ export default function Home() {
         className="relative flex flex-col items-center justify-center flex-1 w-full bg-cover bg-center bg-no-repeat min-h-[60vh] pb-12 pt-24"
         style={{ backgroundImage: "url('/home_background.png')" }}
       >
-        <div className="absolute top-6 right-6 flex items-center gap-4">
-          <button className="bg-[#839b88] hover:bg-[#728877] text-white px-6 py-2 rounded-md font-medium shadow transition-colors cursor-pointer">
-            Login
-          </button>
-          <button className="bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-md shadow flex items-center justify-center font-bold text-lg w-10 h-10 transition-colors cursor-pointer">
-            <span className="text-[#DB4437]">G</span>
-          </button>
-        </div>
+        <AuthHeaderControl />
 
         <div className="flex flex-col items-center text-center px-4 max-w-3xl mt-12">
           <h1 className="text-5xl md:text-7xl font-serif text-[#1e231f] tracking-wide mb-4">

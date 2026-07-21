@@ -1,8 +1,10 @@
-import React from 'react';
-import Link from 'next/link';
-// Adjust the import path below depending on where you save accountbutton.tsx
+"use client";
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AccountButton from '../components/accountButton'; 
 import Footer from '../components/footer'; 
+import { isAuthenticated } from '@/app/libs/auth';
 
 // Mock data matching the rows in image_3936c5.jpg
 const mockHistory = [
@@ -12,17 +14,48 @@ const mockHistory = [
   { id: 4, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
   { id: 5, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
   { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 7, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 8, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
+  { id: 9, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
 ];
 
 export default function ResultHistoryPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 🔐 ROUTE PROTECTION: If not authenticated, bounce back to login page
+    if (!isAuthenticated()) {
+      router.replace('/auth/google?redirect=/result-history');
+    } else {
+      setLoading(false);
+    }
+  }, [router]);
+
+  // Show a clean loading state to prevent unauthorized layout flash
+  if (loading) {
+    return (
+      <div 
+        className="min-h-screen flex items-center justify-center bg-gray-100"
+        style={{
+          backgroundImage: "url('/normalBackground.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <div className="bg-white/80 backdrop-blur-md rounded-xl p-8 shadow-xl flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-[#829985]/20 border-t-[#829985] rounded-full animate-spin" />
+          <p className="text-sm font-medium text-gray-600">Verifying session...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="min-h-screen flex flex-col font-sans relative bg-gray-100"
       style={{
-        // References the image exactly as requested
         backgroundImage: "url('/normalBackground.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',

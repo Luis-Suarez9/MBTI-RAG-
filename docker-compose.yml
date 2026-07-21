@@ -5,7 +5,7 @@ services:
     container_name: mysql
     restart: always
     volumes:
-      - ./backend/data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: productInSupermarket
       MYSQL_DATABASE: mbti_db
@@ -40,3 +40,6 @@ services:
       - /app/node_modules
     depends_on:
       - mbti_express
+
+volumes:
+  mysql_data:

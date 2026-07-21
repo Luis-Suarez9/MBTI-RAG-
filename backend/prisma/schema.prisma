@@ -1,13 +1,49 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+}
+
+model User {
+  id         String       @id @default(uuid())
+  email      String       @unique
+  username   String       @unique
+  password   String?
+  provider   AuthProvider @default(LOCAL)
+  providerId String?      @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 👈 ADD THIS LINE HERE to complete the relation
+  mbtiResults IndividualMBTI[]
+
+  @@map("users")
+}
+
+model IndividualMBTI {
+  id            String   @id @default(uuid())
+  name          String
+  nickname      String?
+  aiDescription String?  @db.Text @map("ai_description")
+  coreExplain   String?  @db.Text @map("core_explain")
+
+  eiPercent     Float    @map("EI%")
+  snPercent     Float    @map("SN%")
+  tfPercent     Float    @map("TF%")
+  jpPercent     Float    @map("JP%")
+
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("individual_mbti")
 }
