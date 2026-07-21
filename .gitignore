@@ -8,3 +8,5 @@ venv
 .graphify
 graphify-out
 data
+.DS_Store
+**/.DS_Store
