@@ -6,8 +6,12 @@ EXPOSE 5175
 # --- Development Stage ---
 FROM base AS development
 ENV NODE_ENV=development
+ENV DATABASE_URL=mysql://root:productInSupermarket@db:3306/mbti_db
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN npm install --no-audit --no-fund
+RUN npx prisma generate
 COPY . .
 CMD ["npm", "run", "dev"]
 

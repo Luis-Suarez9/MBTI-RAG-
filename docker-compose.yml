@@ -9,6 +9,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: productInSupermarket
       MYSQL_DATABASE: mbti_db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pproductInSupermarket"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 15s
     ports:
       - 3306:3306
 
@@ -17,13 +23,19 @@ services:
     image: mbti_express:1.0.0
     container_name: mbti_express
     restart: always
+    environment:
+      DATABASE_URL: mysql://root:productInSupermarket@db:3306/mbti_db
+      PORT: 5175
+    env_file:
+      - ./backend/.env
     ports:
       - 5175:5175
     volumes:
       - ./backend:/app
       - /app/node_modules
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   
   mbti_frontend:
     build: ./frontend

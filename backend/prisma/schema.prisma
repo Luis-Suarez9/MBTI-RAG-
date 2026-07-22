@@ -29,16 +29,16 @@ model User {
 }
 
 model IndividualMBTI {
-  id            String   @id @default(uuid())
+  id            Int    @id @default(autoincrement())
   name          String
   nickname      String?
-  aiDescription String?  @db.Text @map("ai_description")
-  coreExplain   String?  @db.Text @map("core_explain")
+  aiDescription String? @db.Text @map("ai_description")
+  coreExplain   String? @db.Text @map("core_explain")
 
-  eiPercent     Float    @map("EI%")
-  snPercent     Float    @map("SN%")
-  tfPercent     Float    @map("TF%")
-  jpPercent     Float    @map("JP%")
+  eiPercent     Int    @map("EI%")
+  snPercent     Int    @map("SN%")
+  tfPercent     Int    @map("TF%")
+  jpPercent     Int    @map("JP%")
 
   userId        String   @map("user_id")
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)

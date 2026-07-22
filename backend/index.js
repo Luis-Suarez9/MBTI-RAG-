@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors'); // Recommended for handling frontend requests
-const { prisma, testConnection } = require('./utils/mysql');
+const { testConnection } = require('./utils/mysql');
 
 // 1. Import Routes
 const userRoutes = require('./routes/userRoute');
@@ -11,9 +11,6 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// 2. Verify the MySQL connection on startup
-testConnection();
 
 // 3. Mount User CRUD Routes
 app.use('/api/users', userRoutes);
@@ -26,6 +23,16 @@ app.get('/health', (req, res) => {
 // Match the port exposed in docker-compose.yml
 const PORT = process.env.PORT || 5175;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Express server is spinning up inside Docker on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await testConnection();
+    app.listen(PORT, () => {
+      console.log(`🚀 Express server is spinning up inside Docker on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error.message);
+    process.exit(1);
+  }
+}
+
+startServer();

@@ -10,3 +10,5 @@ graphify-out
 data
 .DS_Store
 **/.DS_Store
+postman
+.postman
