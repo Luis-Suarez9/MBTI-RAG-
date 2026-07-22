@@ -13,5 +13,7 @@ router.get('/:id', individualMbtiController.getIndividual_mbtiById);
 router.put('/:id', individualMbtiController.updateIndividual_mbti);
 // Delete
 router.delete('/:id', individualMbtiController.deleteIndividual_mbti);
+// Submit (accept weird JSON)
+router.get('/calculate', individualMbtiController.calculateIndividualMbti);
 
 module.exports = router;

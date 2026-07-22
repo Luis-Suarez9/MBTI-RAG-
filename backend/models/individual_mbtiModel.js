@@ -1,4 +1,4 @@
-// backend/models/individual_mbtiModels.js
+// backend/models/individual_mbtiModel.js
 const prisma = require('../utils/prisma');
 
 const individual_mbtiModel = {
@@ -24,6 +24,14 @@ const individual_mbtiModel = {
   getIndividual_mbtiById: async (id) => {
     return await prisma.individual_mbti.findUnique({
       where: { id },
+    });
+  },
+
+  // Read Individual_mbti by User ID
+  getIndividual_mbtiByUserId: async (userId) => {
+    // Adjust the field name if your schema uses a different column for the user reference
+    return await prisma.individual_mbti.findMany({
+      where: { userId },
     });
   },
 

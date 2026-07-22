@@ -92,7 +92,7 @@ const createUser = async (req, res) => {
 
     res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -102,7 +102,7 @@ const getUsers = async (req, res) => {
     const users = await userModel.getAllUsers();
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -118,7 +118,7 @@ const getUserById = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
