@@ -5,6 +5,7 @@ const { testConnection } = require('./utils/mysql');
 
 // 1. Import Routes
 const userRoutes = require('./routes/userRoute');
+const individualMbtiRoutes = require('./routes/individual_mbtiRoute');
 
 const app = express();
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 3. Mount User CRUD Routes
+// 3. Mount User API Routes
 app.use('/api/users', userRoutes);
 
 // 4. Simple Health Check Route

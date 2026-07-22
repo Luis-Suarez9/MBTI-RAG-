@@ -2,7 +2,7 @@
 require('dotenv').config();
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/userModels');
+const userModel = require('../models/userModel');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
