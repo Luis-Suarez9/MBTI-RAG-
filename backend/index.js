@@ -15,6 +15,7 @@ app.use(express.json());
 
 // 3. Mount User API Routes
 app.use('/api/users', userRoutes);
+app.use('/api/individualMbtiRoutes', individualMbtiRoutes);
 
 // 4. Simple Health Check Route
 app.get('/health', (req, res) => {
