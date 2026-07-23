@@ -1,15 +1,10 @@
 // frontend/app/libs/auth.ts
+import { AuthUser } from '@/types/AuthUser';
+export type { AuthUser };
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
 const TOKEN_KEY = 'mbti_token';
 const USER_KEY = 'mbti_user';
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  username: string;
-  provider: string;
-}
 
 /**
  * Exchange a Google idToken with your Express backend.

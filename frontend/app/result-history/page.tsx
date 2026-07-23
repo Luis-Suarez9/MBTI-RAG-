@@ -2,40 +2,75 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AccountButton from '../components/accountButton'; 
-import Footer from '../components/footer'; 
-import { isAuthenticated } from '@/app/libs/auth';
+import AccountButton from '../components/accountButton';
+import Footer from '../components/footer';
+import { isAuthenticated, getUser } from '@/app/libs/auth';
+import { IndividualMBTI } from '@/types/IndividualMBTI';
+// 🌐 Global API URL from environment variable
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
 
-// Mock data matching the rows in image_3936c5.jpg
-const mockHistory = [
-  { id: 1, date: '15 Oct 2023', result: 'INFJ - The Advocate' },
-  { id: 2, date: '03 Aug 2023', result: 'ENFP - The Campaigner' },
-  { id: 3, date: '21 May 2023', result: 'ISTP - The Virtuoso' },
-  { id: 4, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 5, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 6, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 7, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 8, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-  { id: 9, date: '09 Mar 2023', result: 'ISFP - The Adventurer' },
-];
+
 
 export default function ResultHistoryPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [historyData, setHistoryData] = useState<IndividualMBTI[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // 🔐 ROUTE PROTECTION: If not authenticated, bounce back to login page
     if (!isAuthenticated()) {
       router.replace('/auth/google?redirect=/result-history');
-    } else {
-      setLoading(false);
+      return;
     }
+
+    const user = getUser();
+    if (!user || !user.id) {
+      router.replace('/auth/google?redirect=/result-history');
+      return;
+    }
+
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/individualMbtiRoutes/user/${user.id}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            setHistoryData([]);
+          } else {
+            throw new Error(`Failed to fetch history: ${res.statusText}`);
+          }
+        } else {
+          const data = await res.json();
+          setHistoryData(data);
+        }
+      } catch (err: any) {
+        console.error("Error fetching history:", err);
+        setError(err.message || 'Error fetching history');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
   }, [router]);
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   // Show a clean loading state to prevent unauthorized layout flash
   if (loading) {
     return (
-      <div 
+      <div
         className="min-h-screen flex items-center justify-center bg-gray-100"
         style={{
           backgroundImage: "url('/normalBackground.png')",
@@ -46,7 +81,7 @@ export default function ResultHistoryPage() {
       >
         <div className="bg-white/80 backdrop-blur-md rounded-xl p-8 shadow-xl flex flex-col items-center gap-4">
           <div className="w-10 h-10 border-4 border-[#829985]/20 border-t-[#829985] rounded-full animate-spin" />
-          <p className="text-sm font-medium text-gray-600">Verifying session...</p>
+          <p className="text-sm font-medium text-gray-600">Loading history...</p>
         </div>
       </div>
     );
@@ -75,6 +110,12 @@ export default function ResultHistoryPage() {
             YOUR MBTI TEST HISTORY
           </h1>
 
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded text-center text-sm">
+              {error}
+            </div>
+          )}
+
           <div className="overflow-x-auto">
             <div className="max-h-[22rem] overflow-y-auto">
               <table className="w-full text-left border-collapse">
@@ -92,20 +133,44 @@ export default function ResultHistoryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockHistory.map((item) => (
-                    <tr key={item.id} className="border-b border-gray-100 last:border-0">
-                      <td className="py-5 text-gray-800 font-medium">{item.date}</td>
-                      <td className="py-5 text-gray-800 font-medium">{item.result}</td>
-                      <td className="py-5">
-                        <a href="/test-detail" className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors">
-                          VIEW DETAIL
-                        </a>
+                  {historyData.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="py-8 text-center text-gray-500 font-medium">
+                        No test history found. Take a test to see your results!
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    historyData.map((item) => (
+                      <tr key={item.id} className="border-b border-gray-100 last:border-0">
+                        <td className="py-5 text-gray-800 font-medium">
+                          {formatDate(item.createdAt)}
+                        </td>
+                        <td className="py-5 text-gray-800 font-medium">
+                          {item.name}{item.nickname ? ` - ${item.nickname}` : ''}
+                        </td>
+                        <td className="py-5">
+                          <a
+                            href={`/test-detail/${item.id}`}
+                            className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors inline-block"
+                          >
+                            VIEW DETAIL
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <a
+              href="/"
+              className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium"
+            >
+              BACK TO HOME
+            </a>
           </div>
         </div>
       </main>

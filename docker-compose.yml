@@ -45,6 +45,9 @@ services:
     environment:
       WATCHPACK_POLLING: "true"
       CHOKIDAR_USEPOLLING: "true"
+      # Used only by Next.js Server Components. The browser continues to use
+      # NEXT_PUBLIC_BACKEND_URL from frontend/.env (http://localhost:5175).
+      BACKEND_URL: http://mbti_express:5175
     ports:
       - 3000:3000
     volumes:
