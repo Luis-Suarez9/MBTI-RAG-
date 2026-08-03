@@ -38,7 +38,13 @@ export default function AuthHeaderControl() {
     logout(); // Clear JWT token and user profile from localStorage
     setUser(null);
     setIsDropdownOpen(false);
-    router.refresh();
+
+    const currentPath = typeof window !== "undefined" ? window.location.pathname : "/";
+    if (currentPath === "/result-history" || currentPath.startsWith("/result-history/")) {
+      router.replace("/");
+    } else {
+      router.refresh();
+    }
   };
 
   const avatarInitial = user?.username?.[0]?.toUpperCase() ?? "?";

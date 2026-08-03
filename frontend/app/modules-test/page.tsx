@@ -17,15 +17,75 @@ const modulesData = [
   { id: 8, title: 'Module 8: J or P', description: 'Judging vs Prospecting (Part 2)' },
 ];
 
-// Mock generic questions for the mockup (6 per page)
-const getQuestionsForPage = (pageNum: number) => [
-  `${pageNum}.1. What is your approach to handling sudden changes in your environment?`,
-  `${pageNum}.2. How often do you find yourself reflecting on abstract concepts?`,
-  `${pageNum}.3. In a group setting, do you prefer to take the lead or observe?`,
-  `${pageNum}.4. When making a decision, do you rely more on logic or how others feel?`,
-  `${pageNum}.5. How comfortable are you with strictly structured schedules?`,
-  `${pageNum}.6. Do you feel energized after spending time in large social gatherings?`,
-];
+// [DELETED] Removed the `getQuestionsForPage` function here that returned the exact same array for every page.
+
+// Data structure holding the full MBTI question set, grouped by module pages.
+const questionsData: Record<number, string[]> = {
+  1: [
+    '1. I feel full of energy when I am with a big group of people.',
+    '2. I like busy places where I can talk to many people.',
+    '3. I like to watch how a group acts before I join in.',
+    '4. I prefer having a few very close friends instead of a large group of people I know.',
+    '5. I much prefer writing my thoughts down instead of speaking them.',
+    '6. I often become the center of attention in a group.'
+  ],
+  2: [
+    '7. I find it easy to start talking to strangers at events.',
+    '8. I work best in teams where people talk and work together a lot.',
+    '9. I feel rested and get my energy back when I spend time completely alone.',
+    '10. I like to think deeply about my ideas by myself before I share them.',
+    '11. I prefer quiet places without too much noise or action.',
+    '12. I like to talk about my ideas out loud with others to make them better.'
+  ],
+  3: [
+    '13. I trust real facts and things I can see more than ideas and theories.',
+    '14. I focus mostly on what is happening right now and practical details.',
+    '15. I like tasks that have clear, step-by-step instructions.',
+    '16. I trust my "gut feelings" and sudden ideas when things are complicated.',
+    '17. I prefer looking at the big picture instead of getting stuck on small details.',
+    '18. I like to solve completely new problems by thinking of creative ways.'
+  ],
+  4: [
+    '19. I value hands-on experience and common sense over using my imagination.',
+    '20. I am good at remembering exact details and facts from the past.',
+    '21. I like to solve problems using methods that have worked before.',
+    '22. I naturally look for patterns and think about what might happen in the future.',
+    '23. I really enjoy talking about big ideas and how things connect.',
+    '24. I often spend time imagining new ways the world could work.'
+  ],
+  5: [
+    '25. I use facts and logic to make hard choices, not my feelings.',
+    '26. I care more about finding the truth than making sure everyone gets along.',
+    '27. I judge if something is right based only on the facts.',
+    '28. I think about how people will feel when I make hard choices.',
+    '29. I care a lot about others\' feelings and want everyone in a group to be happy.',
+    '30. I judge situations by thinking about what people value and how they feel.'
+  ],
+  6: [
+    '31. I think it is much more important to be fair than to be gentle.',
+    '32. I can easily put my feelings aside to stay fair and focused.',
+    '33. I will point out mistakes in a plan, even if it upsets someone.',
+    '34. I think it is much more important to be kind and understanding than strictly fair.',
+    '35. I easily feel and take on the moods of the people around me.',
+    '36. I often change my plans to make sure others feel included and cared for.'
+  ],
+  7: [
+    '37. I always follow the plans and schedules I make for myself.',
+    '38. I only feel relaxed after a final choice has been made.',
+    '39. I like to keep my room, files, and daily plans very organized.',
+    '40. I am very flexible and like to keep my choices open as long as possible.',
+    '41. I do my best in unplanned situations where I have to think fast.',
+    '42. I feel excited, not stressed, when plans suddenly change.'
+  ],
+  8: [
+    '43. I prefer to finish my work long before it is due so I do not feel stressed.',
+    '44. I handle big projects by breaking them down into clear, small steps.',
+    '45. I use clear rules and routines to guide my everyday life.',
+    '46. I prefer to work when I suddenly feel like it, rather than following a strict schedule.',
+    '47. I leave my plans open so I can easily change them if new things happen.',
+    '48. I have a very relaxed and casual way of managing my time and space.'
+  ]
+};
 
 // Define the scale options with specific colors (Restored to red/green)
 const scaleOptions = [
@@ -47,7 +107,10 @@ export default function ModuleTestPage() {
   const [validationMessage, setValidationMessage] = useState('');
 
   const currentModule = modulesData[currentPage - 1];
-  const currentQuestions = getQuestionsForPage(currentPage);
+  
+  // [EDITED] Replaced `getQuestionsForPage(currentPage)` with our new `questionsData` lookup
+  const currentQuestions = questionsData[currentPage]; 
+  
   const isCurrentPageComplete = currentQuestions.every((_, idx) => typeof answers[`${currentPage}-${idx}`] === 'number');
 
   // Handle bubble click
