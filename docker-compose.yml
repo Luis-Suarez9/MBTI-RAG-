@@ -6,9 +6,8 @@ services:
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: productInSupermarket
-      MYSQL_DATABASE: mbti_db
+    env_file:
+      - ./db.env
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pproductInSupermarket"]
       interval: 5s
@@ -23,11 +22,9 @@ services:
     image: mbti_express:1.0.0
     container_name: mbti_express
     restart: always
-    environment:
-      DATABASE_URL: mysql://root:productInSupermarket@db:3306/mbti_db
-      PORT: 5175
     env_file:
       - ./backend/.env
+      - ./backend/docker.env
     ports:
       - 5175:5175
     volumes:
@@ -42,12 +39,9 @@ services:
     image: supermarket_frontend:1.0.0
     container_name: supermarket_frontend
     restart: always
-    environment:
-      WATCHPACK_POLLING: "true"
-      CHOKIDAR_USEPOLLING: "true"
-      # Used only by Next.js Server Components. The browser continues to use
-      # NEXT_PUBLIC_BACKEND_URL from frontend/.env (http://localhost:5175).
-      BACKEND_URL: http://mbti_express:5175
+    env_file:
+      - ./frontend/.env
+      - ./frontend/docker.env
     ports:
       - 3000:3000
     volumes:

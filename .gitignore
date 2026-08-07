@@ -15,3 +15,6 @@ postman
 .agents
 .codex
 .gemini
+.graphify-out
+db.env
+docker.env

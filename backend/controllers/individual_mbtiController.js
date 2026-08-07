@@ -76,11 +76,9 @@ const deleteIndividual_mbti = async (req, res) => {
   res.status(200).json({ message: 'Individual MBTI deleted' });
 };
 
-/**
- * Calculate endpoint (GET) returning placeholder data.
- */
 const calculateIndividualMbti = async (req, res) => {
   const payload = (req.body && Object.keys(req.body).length) ? req.body : req.query;
+  console.log(payload);
   res.status(200).json({ score: 69, MBTI: "ENFP" });
 };
 
