@@ -32,20 +32,43 @@ export default function ResultHistoryPage() {
 
     const fetchHistory = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/individualMbtiRoutes/user/${user.id}`);
+        const res = await fetch(`${API_URL}/api/individualMbtiRoutes/user/${user.id}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+
         if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('mbti_user');
+            router.replace('/auth/google?redirect=/result-history');
+            return;
+          }
+
           if (res.status === 404) {
             setHistoryData([]);
-          } else {
-            throw new Error(`Failed to fetch history: ${res.statusText}`);
+            return;
           }
-        } else {
-          const data = await res.json();
-          setHistoryData(data);
+
+          let errorMessage = `Failed to fetch history: ${res.status}`;
+          try {
+            const errBody = await res.json();
+            errorMessage = errBody?.error || errBody?.message || errorMessage;
+          } catch {
+            // ignore JSON parse errors and fall back to the status-based message
+          }
+
+          throw new Error(errorMessage);
         }
-      } catch (err: any) {
-        console.error("Error fetching history:", err);
-        setError(err.message || 'Error fetching history');
+
+        const data = await res.json();
+        setHistoryData(Array.isArray(data) ? data : []);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Error fetching history';
+        console.error('Error fetching history:', err);
+        setError(message);
       } finally {
         setLoading(false);
       }

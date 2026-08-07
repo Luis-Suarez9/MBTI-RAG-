@@ -38,6 +38,10 @@ const getIndividual_mbtiById = async (req, res) => {
  */
 const getIndividual_mbtiByUserId = async (req, res) => {
   const { userId } = req.params;
+  if (req.user.userId !== userId) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
   const records = await individual_mbtiModel.getIndividual_mbtiByUserId(userId);
   if (!records || records.length === 0) {
     return res.status(404).json({ error: 'Individual MBTI not found' });
@@ -70,6 +74,9 @@ const deleteIndividual_mbti = async (req, res) => {
   const existingRecord = await individual_mbtiModel.getIndividual_mbtiById(id);
   if (!existingRecord) {
     return res.status(404).json({ error: 'Individual MBTI not found' });
+  }
+  if (existingRecord.userId !== req.user.userId) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   await individual_mbtiModel.deleteIndividual_mbti(id);

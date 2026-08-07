@@ -3,17 +3,17 @@ import { AuthUser } from '@/types/AuthUser';
 export type { AuthUser };
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
-const TOKEN_KEY = 'mbti_token';
 const USER_KEY = 'mbti_user';
 
 /**
- * Exchange a Google idToken with your Express backend.
- * Returns the JWT + user object and persists them to localStorage.
+ * Exchange a Google idToken with your Express backend. The backend stores the
+ * JWT in an HttpOnly cookie; only the non-sensitive user profile is persisted.
  */
 export async function loginWithGoogle(idToken: string): Promise<AuthUser> {
   const res = await fetch(`${BACKEND_URL}/api/users/google`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ idToken }),
   });
 
@@ -25,16 +25,9 @@ export async function loginWithGoogle(idToken: string): Promise<AuthUser> {
   const data = await res.json();
 
   // Persist
-  localStorage.setItem(TOKEN_KEY, data.token);
   localStorage.setItem(USER_KEY, JSON.stringify(data.user));
 
   return data.user as AuthUser;
-}
-
-/** Get the stored JWT (for attaching to API requests) */
-export function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(TOKEN_KEY);
 }
 
 /** Get the stored user object */
@@ -49,13 +42,19 @@ export function getUser(): AuthUser | null {
   }
 }
 
-/** Clear session */
-export function logout(): void {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+/** Clear the server session cookie and the locally cached display profile. */
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${BACKEND_URL}/api/users/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } finally {
+    localStorage.removeItem(USER_KEY);
+  }
 }
 
-/** True if a token is present in localStorage */
+/** True if a locally cached profile exists. Protected API routes enforce the session cookie. */
 export function isAuthenticated(): boolean {
-  return !!getToken();
+  return !!getUser();
 }

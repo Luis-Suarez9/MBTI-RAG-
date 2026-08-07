@@ -1,25 +1,21 @@
 // backend/middleware/verifyToken.js
 const jwt = require('jsonwebtoken');
+const { getCookie, SESSION_COOKIE_NAME } = require('../utils/authCookies');
 
 /**
  * Express middleware that protects routes — the Express equivalent of
  * Django's @is_authenticated decorator.
  *
- * Expects the request to carry:
- *   Authorization: Bearer <your_jwt>
+ * Expects the request to carry the HttpOnly session cookie set at login.
  *
  * On success  → attaches decoded payload to req.user and calls next()
  * On failure  → responds with 401 Unauthorized immediately
  */
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-
-  // Header must exist and start with "Bearer "
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const token = getCookie(req, SESSION_COOKIE_NAME);
+  if (!token) {
     return res.status(401).json({ error: 'Unauthorized: no token provided' });
   }
-
-  const token = authHeader.split(' ')[1]; // grab the part after "Bearer "
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

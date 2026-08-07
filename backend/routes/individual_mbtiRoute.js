@@ -2,19 +2,21 @@
 const express = require('express');
 const router = express.Router();
 const individualMbtiController = require('../controllers/individual_mbtiController');
+const verifyToken = require('../middleware/verifyToken');
+const { verifyCsrfOrigin } = require('../utils/authCookies');
 
 // Create
 router.post('/', individualMbtiController.createIndividual_mbti);
 // Read all
 router.get('/', individualMbtiController.getAllIndividual_mbtis);
 // Read by user id (placed before /:id to prevent route collisions)
-router.get('/user/:userId', individualMbtiController.getIndividual_mbtiByUserId);
+router.get('/user/:userId', verifyToken, individualMbtiController.getIndividual_mbtiByUserId);
 // Read by record id
-router.get('/:id', individualMbtiController.getIndividual_mbtiById);
+router.get('/:id', verifyToken ,individualMbtiController.getIndividual_mbtiById);
 // Update
 router.put('/:id', individualMbtiController.updateIndividual_mbti);
 // Delete
-router.delete('/:id', individualMbtiController.deleteIndividual_mbti);
+router.delete('/:id', verifyToken, verifyCsrfOrigin, individualMbtiController.deleteIndividual_mbti);
 // Submit (accept weird JSON)
 router.post('/calculate', individualMbtiController.calculateIndividualMbti);
 

@@ -29,13 +29,13 @@ export default function AuthHeaderControl() {
     return <div className="absolute top-6 right-6 h-10 w-[170px]" />;
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
       googleLogout(); // Clear any Google-side session state/cache in browser memory
     } catch (e) {
       console.warn("Google logout warning:", e);
     }
-    logout(); // Clear JWT token and user profile from localStorage
+    await logout();
     setUser(null);
     setIsDropdownOpen(false);
 

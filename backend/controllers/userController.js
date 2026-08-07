@@ -3,6 +3,7 @@ require('dotenv').config();
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
+const { clearAuthCookies, setAuthCookies } = require('../utils/authCookies');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -55,9 +56,9 @@ const googleAuth = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    setAuthCookies(res, token);
     res.status(200).json({
       message: 'Google auth successful',
-      token,
       user: {
         id: user.id,
         email: user.email,
@@ -69,6 +70,11 @@ const googleAuth = async (req, res) => {
     console.error('Google auth error:', error.message);
     res.status(401).json({ error: 'Google authentication failed', details: error.message });
   }
+};
+
+const logout = (req, res) => {
+  clearAuthCookies(res);
+  res.status(204).end();
 };
 
 // ─── CRUD ────────────────────────────────────────────────────────────────────
@@ -148,6 +154,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   googleAuth,
+  logout,
   createUser,
   getUsers,
   getUserById,
