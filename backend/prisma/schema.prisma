@@ -40,8 +40,8 @@ model IndividualMBTI {
   tfPercent     Int    @map("TF%")
   jpPercent     Int    @map("JP%")
 
-  userId        String   @map("user_id")
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String?  @map("user_id") 
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt     DateTime @default(now()) @map("created_at")
 

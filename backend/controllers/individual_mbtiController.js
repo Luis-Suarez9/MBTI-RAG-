@@ -1,6 +1,7 @@
 // backend/controllers/individual_mbtiController.js
 require('dotenv').config();
 const individual_mbtiModel = require('../models/individual_mbtiModel');
+const calculate = require('../utils/calculator');
 
 // ─── CRUD ────────────────────────────────────────────────────────────────────
 
@@ -85,8 +86,32 @@ const deleteIndividual_mbti = async (req, res) => {
 
 const calculateIndividualMbti = async (req, res) => {
   const payload = (req.body && Object.keys(req.body).length) ? req.body : req.query;
-  console.log(payload);
-  res.status(200).json({ score: 69, MBTI: "ENFP" });
+
+  // Compute the four MBTI dimension percentages
+  const result = await calculate.calculator(payload);
+
+  // ── Summary log (visible in Docker logs) ──────────────────────────────────
+  console.log('─'.repeat(50));
+  console.log('[calculateIndividualMbti] MBTI Dimension Results:');
+  console.log(`  Group 1 (E/I - Q1–12):   ${result.group1}%`);
+  console.log(`  Group 2 (S/N - Q13–24):  ${result.group2}%`);
+  console.log(`  Group 3 (T/F - Q25–36):  ${result.group3}%`);
+  console.log(`  Group 4 (J/P - Q37–48):  ${result.group4}%`);
+  console.log('─'.repeat(50));
+  // ──────────────────────────────────────────────────────────────────────────
+
+  // create individual mbti from user id too
+  // if user not login just like send response and like the ai description part just have them wait
+  const userId = req.user?.userId || null;
+  if (userId) {
+    // send request to fastapi and after it finishes save it to database and send to frontend
+  } else {
+    // do same thing but do not add user id; make it null
+  }
+
+  res.status(200).json({
+    result,
+  });
 };
 
 module.exports = {
