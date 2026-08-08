@@ -56,6 +56,8 @@ const calculator = async (payload) => {
   }
 
   // Normalise and convert to percentage for each group
+  // Prepare results container and normalise into percentages for each group
+  const results = { group1: 0, group2: 0, group3: 0, group4: 0 };
   for (const [key, rawSum] of Object.entries(groups)) {
     const maxWeight = MAX_WEIGHTS[key];
     const rawNorm = rawSum / maxWeight;           // normalised ratio (can be negative)
