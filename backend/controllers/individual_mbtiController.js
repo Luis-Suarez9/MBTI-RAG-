@@ -29,9 +29,13 @@ const getAllIndividual_mbtis = async (req, res) => {
 const getIndividual_mbtiById = async (req, res) => {
   const { id } = req.params;
   const record = await individual_mbtiModel.getIndividual_mbtiById(id);
-  if (!record) {
-    return res.status(404).json({ error: 'Individual MBTI not found' });
+
+  // Return 404 whether the record doesn't exist OR belongs to someone else —
+  // deliberately avoids leaking that the record exists at all.
+  if (!record || String(record.userId) !== String(req.user.userId)) {
+    return res.status(403).json({ error: 'Individual MBTI not found' });
   }
+
   res.status(200).json(record);
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { cookies } from 'next/headers';
 import AccountButton from '../../components/accountButton';
 import Footer from '../../components/footer';
 import { Trait } from '@/types/Trait';
@@ -13,9 +14,19 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
   const { id: idStr } = await params;
   const id = Number(idStr);
 
+  // Forward the browser's HTTP-only session cookie to the backend so
+  // verifyToken middleware can authenticate this server-side fetch.
+  const cookieStore = await cookies();
+  const SESSION_COOKIE_NAME = process.env.NODE_ENV === 'production' ? '__Host-mbti_session' : 'mbti_session';
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
+  const cookieHeader = sessionCookie ? `${SESSION_COOKIE_NAME}=${sessionCookie.value}` : '';
+
   let mbtiRecord: IndividualMBTI | null = null;
   try {
-    const res = await fetch(`${API_URL}/api/individualMbtiRoutes/${id}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/individualMbtiRoutes/${id}`, {
+      cache: 'no-store',
+      headers: cookieHeader ? { Cookie: cookieHeader } : {},
+    });
     if (res.ok) {
       mbtiRecord = await res.json();
     }
@@ -27,8 +38,8 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-4">
         <p className="text-lg text-gray-700 font-semibold">MBTI Record not found.</p>
-        <a href="/result-history" className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium">
-          BACK TO HISTORY
+        <a href="/" className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium">
+          BACK TO HOME
         </a>
       </div>
     );
