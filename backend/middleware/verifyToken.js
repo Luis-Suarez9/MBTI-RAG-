@@ -29,4 +29,27 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+/**
+ * Optional auth middleware — never blocks the request.
+ *
+ * If a valid session cookie is present it decodes the JWT and attaches
+ * the payload to req.user exactly like verifyToken does.
+ * If the cookie is missing or the token is invalid/expired it simply
+ * calls next() with req.user left undefined — useful for endpoints that
+ * work for both guests and authenticated users.
+ */
+const optionalVerifyToken = (req, res, next) => {
+  const token = getCookie(req, SESSION_COOKIE_NAME);
+  if (!token) return next(); // guest — no cookie, carry on
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // { userId, email, provider, iat, exp }
+  } catch {
+    // expired or tampered token — treat as guest, don't block
+  }
+
+  next();
+};
+
+module.exports = { verifyToken, optionalVerifyToken };

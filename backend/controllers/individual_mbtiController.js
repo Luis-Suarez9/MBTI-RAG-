@@ -2,6 +2,7 @@
 require('dotenv').config();
 const individual_mbtiModel = require('../models/individual_mbtiModel');
 const calculate = require('../utils/calculator');
+const { mbtiProfiles } = require('../libs/mbtiDetail');
 
 // ─── CRUD ────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,7 @@ const calculateIndividualMbti = async (req, res) => {
 
   // Compute the four MBTI dimension percentages
   const result = await calculate.calculator(payload);
+  const mbtiName = `${result.EorI}${result.SorN}${result.TorF}${result.JorP}`;
 
   // ── Summary log (visible in Docker logs) ──────────────────────────────────
   console.log('─'.repeat(50));
@@ -99,18 +101,42 @@ const calculateIndividualMbti = async (req, res) => {
   console.log(`  Group 4 (J/P - Q37–48):  ${result.group4}%`);
   console.log('─'.repeat(50));
   // ──────────────────────────────────────────────────────────────────────────
-
+  // make request to fast api to get ai description
   // create individual mbti from user id too
   // if user not login just like send response and like the ai description part just have them wait
   const userId = req.user?.userId || null;
+  console.log('[calculateIndividualMbti] req.user:', req.user);
+  console.log('[calculateIndividualMbti] userId:', userId);
+
+  const matchedProfile = mbtiProfiles.find(p => p.name.includes(mbtiName));
+  const nickname = matchedProfile ? matchedProfile.title : "Not available for now";
+  const coreExplain = matchedProfile ? matchedProfile.coreDescription : "Not available for now";
+
+  const mbtiData = {
+    name: mbtiName,
+    nickname: nickname,
+    aiDescription: "Not available for now",
+    coreExplain: coreExplain,
+    eiPercent: Math.round(result.group1),
+    snPercent: Math.round(result.group2),
+    tfPercent: Math.round(result.group3),
+    jpPercent: Math.round(result.group4),
+  };
+
   if (userId) {
-    // send request to fastapi and after it finishes save it to database and send to frontend
-  } else {
-    // do same thing but do not add user id; make it null
+    mbtiData.userId = userId;
+  }
+
+  let savedRecord = null;
+  try {
+    savedRecord = await individual_mbtiModel.createIndividual_mbti(mbtiData);
+  } catch (err) {
+    console.error("[calculateIndividualMbti] Error saving MBTI record:", err);
   }
 
   res.status(200).json({
     result,
+    savedRecord
   });
 };
 

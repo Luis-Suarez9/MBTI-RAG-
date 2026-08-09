@@ -27,7 +27,7 @@ const calculator = async (payload) => {
   const questions = Array.isArray(payload) ? payload : Object.values(payload);
   console.log(questions);
   // Initialise group accumulators
-  const groups = { group1: 0, group2: 0, group3: 0, group4: 0 };
+  const groups = { group1: 0, group2: 0, group3: 0, group4: 0 , EorI: "", SorN: "", TorF: "", JorP: ""};
 
   for (const item of questions) {
     // Extract question number from the leading digits, e.g. "12. Some text" → 12
@@ -72,6 +72,31 @@ const calculator = async (payload) => {
   console.log(`[MBTI Calculator] Group 4 (J/P - Q37–48):  ${results.group4}%`);
   // ──────────────────────────────────────────────────────────────────────────
 
+  // determining the mbti type
+  if (results.group1 > 50) {
+    results.EorI = "E";
+  } else {
+    results.EorI = "I";
+  }
+
+  if (results.group2 > 50) {
+    results.SorN = "S";
+  } else {
+    results.SorN = "N";
+  }
+
+  if (results.group3 > 50) {
+    results.TorF = "T";
+  } else {
+    results.TorF = "F";
+  }
+
+  if (results.group4 > 50) {
+    results.JorP = "J";
+  } else {
+    results.JorP = "P";
+  }
+  console.log(`${results.EorI}${results.SorN}${results.TorF}${results.JorP}`)
   return results;
 };
 

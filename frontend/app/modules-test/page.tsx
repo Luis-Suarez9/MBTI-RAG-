@@ -156,6 +156,7 @@ export default function ModuleTestPage() {
         const response = await fetch(`${API_URL}/api/individualMbtiRoutes/calculate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // send HTTP-only session cookie so the backend can identify the user
           body: JSON.stringify(submissionPayload),
         });
 
