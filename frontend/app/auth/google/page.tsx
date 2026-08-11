@@ -47,10 +47,10 @@ export default function GoogleAuthPage() {
   };
 
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <div 
+    <GoogleOAuthProvider clientId={CLIENT_ID} locale="en">
+      <div
         className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat relative px-4"
-        style={{ 
+        style={{
           backgroundImage: "url('/normalBackground.png')",
           backgroundAttachment: 'fixed'
         }}
@@ -61,7 +61,7 @@ export default function GoogleAuthPage() {
         <div className="relative z-10 w-full max-w-[420px] transform hover:scale-[1.01] transition-transform duration-500 ease-out">
           {/* Main Card with Glassmorphism and Sage Border */}
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 p-10 flex flex-col items-center gap-8 relative overflow-hidden">
-            
+
             {/* Subtle light reflect line on top */}
             <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-white/50 to-transparent" />
 
@@ -131,10 +131,10 @@ export default function GoogleAuthPage() {
               onClick={() => router.back()}
               className="group flex items-center gap-2 text-sm text-gray-500 hover:text-[#6e8573] font-medium transition-colors cursor-pointer"
             >
-              <svg 
-                className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />

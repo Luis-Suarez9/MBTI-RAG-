@@ -27,6 +27,15 @@ function log(msg: string) {
     slowMo: 200,               // slow down so you can visually trace what happens
   });
 
+  // When the user manually closes the browser window, Playwright emits
+  // the 'disconnected' event. Resolve the script when that happens so
+  // the user can close the browser to stop the automation.
+  browser.on('disconnected', () => {
+    log('Browser disconnected by user — exiting script.');
+    // Allow a short delay for logs to flush, then exit.
+    setTimeout(() => process.exit(0), 50);
+  });
+
   const page = await browser.newPage();
 
   // Step 1: Navigate to homepage
@@ -96,6 +105,9 @@ function log(msg: string) {
     }
   }
 
-  log('Automation complete! Check your Docker backend logs for the calculation results.');
-  await browser.close();
+  log('Automation complete! Leaving browser open. Close the browser to stop the script.');
+  // Wait until the browser is closed by the user (disconnected event)
+  await new Promise<void>((resolve) => {
+    browser.once('disconnected', () => resolve());
+  });
 })();

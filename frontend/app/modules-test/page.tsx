@@ -171,16 +171,18 @@ export default function ModuleTestPage() {
         }
 
         console.log('MBTI calculation result:', responseData);
+
+        if (responseData?.id) {
+          router.push(`/test-detail/${responseData.id}`);
+        } else {
+          router.push('/test-detail');
+        }
       } catch (error) {
         console.error('Error submitting MBTI answers:', error);
         setValidationMessage(
           error instanceof Error ? error.message : 'Unable to submit your answers. Please try again.',
         );
-        return;
       }
-
-      // If on the last page, route to the results page
-      router.push('/test-detail');
     }
   };
 

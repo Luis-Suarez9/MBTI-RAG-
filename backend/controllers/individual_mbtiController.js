@@ -139,8 +139,7 @@ const calculateIndividualMbti = async (req, res) => {
   }
 
   res.status(200).json({
-    result,
-    savedRecord
+    id: savedRecord ? savedRecord.id : null
   });
 };
 
