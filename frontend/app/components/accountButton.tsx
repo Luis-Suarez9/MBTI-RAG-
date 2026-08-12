@@ -25,7 +25,7 @@ export default function AuthHeaderControl() {
   };
 
   if (!mounted) {
-    // Prevent hydration flicker by rendering a matching blank space while reading localStorage
+    // Prevent hydration flicker by rendering a matching blank space while reading sessionStorage
     return <div className="absolute top-6 right-6 h-10 w-[170px]" />;
   }
 

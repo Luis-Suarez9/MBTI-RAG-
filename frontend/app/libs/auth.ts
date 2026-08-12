@@ -25,7 +25,8 @@ export async function loginWithGoogle(idToken: string): Promise<AuthUser> {
   const data = await res.json();
 
   // Persist
-  localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+  sessionStorage.setItem(USER_KEY, JSON.stringify(data.user));
+  localStorage.removeItem(USER_KEY);
 
   return data.user as AuthUser;
 }
@@ -33,7 +34,7 @@ export async function loginWithGoogle(idToken: string): Promise<AuthUser> {
 /** Get the stored user object */
 export function getUser(): AuthUser | null {
   if (typeof window === 'undefined') return null;
-  const raw = localStorage.getItem(USER_KEY);
+  const raw = sessionStorage.getItem(USER_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as AuthUser;
@@ -50,6 +51,7 @@ export async function logout(): Promise<void> {
       credentials: 'include',
     });
   } finally {
+    sessionStorage.removeItem(USER_KEY);
     localStorage.removeItem(USER_KEY);
   }
 }

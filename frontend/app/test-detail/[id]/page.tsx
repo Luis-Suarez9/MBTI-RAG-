@@ -19,6 +19,7 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
   const cookieStore = await cookies();
   const SESSION_COOKIE_NAME = process.env.NODE_ENV === 'production' ? '__Host-mbti_session' : 'mbti_session';
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
+  const isAuthenticated = !!sessionCookie;
   const cookieHeader = sessionCookie ? `${SESSION_COOKIE_NAME}=${sessionCookie.value}` : '';
 
   let mbtiRecord: IndividualMBTI | null = null;
@@ -184,11 +185,19 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
 
         {/* Bottom Controls */}
         <div className="flex justify-between items-center mt-10 mb-4">
-          <a href="/result-history">
-            <button className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium cursor-pointer">
-              BACK TO HISTORY
-            </button>
-          </a>
+          {isAuthenticated ? (
+            <a href="/result-history">
+              <button className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium cursor-pointer">
+                BACK TO HISTORY
+              </button>
+            </a>
+          ) : (
+            <a href="/">
+              <button className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium cursor-pointer">
+                BACK TO HOME
+              </button>
+            </a>
+          )}
         </div>
       </div>
 

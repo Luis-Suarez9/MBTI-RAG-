@@ -12,7 +12,7 @@ router.get('/', individualMbtiController.getAllIndividual_mbtis);
 // Read by user id (placed before /:id to prevent route collisions)
 router.get('/user/:userId', verifyToken, individualMbtiController.getIndividual_mbtiByUserId);
 // Read by record id
-router.get('/:id', verifyToken, individualMbtiController.getIndividual_mbtiById);
+router.get('/:id', optionalVerifyToken, individualMbtiController.getIndividual_mbtiById);
 // Update
 router.put('/:id', individualMbtiController.updateIndividual_mbti);
 // Delete

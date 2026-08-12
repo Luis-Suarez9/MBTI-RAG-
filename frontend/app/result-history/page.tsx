@@ -42,6 +42,7 @@ export default function ResultHistoryPage() {
 
         if (!res.ok) {
           if (res.status === 401 || res.status === 403) {
+            sessionStorage.removeItem('mbti_user');
             localStorage.removeItem('mbti_user');
             router.replace('/auth/google?redirect=/result-history');
             return;
