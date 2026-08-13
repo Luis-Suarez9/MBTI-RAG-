@@ -16,6 +16,31 @@ export default function ResultHistoryPage() {
   const [loading, setLoading] = useState(true);
   const [historyData, setHistoryData] = useState<IndividualMBTI[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
+  const confirmDelete = async () => {
+    if (deleteId === null) return;
+    const id = deleteId;
+    setDeleteId(null);
+    try {
+      const res = await fetch(`${API_URL}/api/individualMbtiRoutes/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        const msg = errBody?.error || errBody?.message || `Delete failed: ${res.status}`;
+        throw new Error(msg);
+      }
+      // Remove deleted item from state
+      setHistoryData((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error deleting record';
+      console.error('Delete error:', err);
+      setError(message);
+    }
+  };
 
   useEffect(() => {
     // 🔐 ROUTE PROTECTION: If not authenticated, bounce back to login page
@@ -173,12 +198,28 @@ export default function ResultHistoryPage() {
                           {item.name}{item.nickname ? ` - ${item.nickname}` : ''}
                         </td>
                         <td className="py-5">
-                          <a
-                            href={`/test-detail/${item.id}`}
-                            className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors inline-block"
-                          >
-                            VIEW DETAIL
-                          </a>
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={`/test-detail/${item.id}`}
+                              className="bg-[#829985] text-white px-5 py-2 rounded text-sm font-medium shadow-sm hover:bg-[#6b826e] transition-colors inline-block"
+                            >
+                              VIEW DETAIL
+                            </a>
+                            <button
+                              onClick={() => setDeleteId(item.id)}
+                              className="text-red-500 hover:text-red-700 text-xl cursor-pointer p-1 transition-colors flex items-center justify-center"
+                              title="Delete record"
+                              aria-label="Delete"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="w-6 h-6 fill-current"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21H7ZM17 6H7v13h10V6ZM9 17h2V8H9v9Zm4 0h2V8h-2v9ZM7 6v13V6Z" />
+                              </svg>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -198,6 +239,38 @@ export default function ResultHistoryPage() {
           </div>
         </div>
       </main>
+
+      {/* 🛑 Confirmation Modal Card in middle of screen */}
+      {deleteId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm text-center transform transition-all animate-in fade-in zoom-in duration-150">
+            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 fill-current" viewBox="0 0 24 24">
+                <path d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21H7ZM17 6H7v13h10V6ZM9 17h2V8H9v9Zm4 0h2V8h-2v9ZM7 6v13V6Z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Record</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this test result? This action cannot be undone.
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-lg transition-colors cursor-pointer"
+              >
+                No, Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow transition-colors cursor-pointer"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

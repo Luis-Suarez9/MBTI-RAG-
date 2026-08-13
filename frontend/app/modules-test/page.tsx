@@ -10,14 +10,14 @@ const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
 
 // Define the 8 modules based on the 4 MBTI dichotomies
 const modulesData = [
-  { id: 1, title: 'Module 1: E or I', description: 'Extraversion vs Introversion (Part 1)' },
-  { id: 2, title: 'Module 2: E or I', description: 'Extraversion vs Introversion (Part 2)' },   // weight 40.5
-  { id: 3, title: 'Module 3: S or N', description: 'Sensing vs Intuition (Part 1)' },
-  { id: 4, title: 'Module 4: S or N', description: 'Sensing vs Intuition (Part 2)' },           // weight 41.1
-  { id: 5, title: 'Module 5: T or F', description: 'Thinking vs Feeling (Part 1)' },
-  { id: 6, title: 'Module 6: T or F', description: 'Thinking vs Feeling (Part 2)' },            // weight 44.7
-  { id: 7, title: 'Module 7: J or P', description: 'Judging vs Prospecting (Part 1)' },
-  { id: 8, title: 'Module 8: J or P', description: 'Judging vs Prospecting (Part 2)' },         // weight 44.1
+  { id: 1, title: 'Module 1:' },
+  { id: 2, title: 'Module 2:' },   // weight 40.5
+  { id: 3, title: 'Module 3:' },
+  { id: 4, title: 'Module 4:' },   // weight 41.1
+  { id: 5, title: 'Module 5:' },
+  { id: 6, title: 'Module 6:' },   // weight 44.7
+  { id: 7, title: 'Module 7:' },
+  { id: 8, title: 'Module 8:' },   // weight 44.1
 ];
 
 // [DELETED] Removed the `getQuestionsForPage` function here that returned the exact same array for every page.
