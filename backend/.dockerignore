@@ -11,6 +11,7 @@ yarn-error.log*
 .github
 .gitignore
 .DS_Store
+*.env
 
 Dockerfile
 .dockerignore

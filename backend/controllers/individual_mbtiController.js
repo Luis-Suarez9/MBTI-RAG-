@@ -123,15 +123,50 @@ const calculateIndividualMbti = async (req, res) => {
   const nickname = matchedProfile ? matchedProfile.title : "Not available for now";
   const coreExplain = matchedProfile ? matchedProfile.coreDescription : "Not available for now";
 
+  const answers = (Array.isArray(payload) ? payload : Object.values(payload)).map(item => item.score || 0);
+  const mbtiPayload = [{
+    name: mbtiName,
+    eiPercent: Math.round(result.group1),
+    snPercent: Math.round(result.group2),
+    tfPercent: Math.round(result.group3),
+    jpPercent: Math.round(result.group4),
+  }];
+
+  let aiDescription = "Not available for now";
+  let matchingPartnerAndReason = "Not available for now";
+  let clashedMbtiAndHowToSolve = "Not available for now";
+
+  try {
+    const fastApiUrl = process.env.FASTAPI_URL || 'http://localhost:8000';
+    const response = await fetch(`${fastApiUrl}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers, mbti: mbtiPayload })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      aiDescription = data.aiDescription || aiDescription;
+      matchingPartnerAndReason = data.matching_partner_and_reason || matchingPartnerAndReason;
+      clashedMbtiAndHowToSolve = data.clashed_mbti_and_how_to_solve || clashedMbtiAndHowToSolve;
+    } else {
+      console.error("[calculateIndividualMbti] FastAPI returned status:", response.status);
+    }
+  } catch (error) {
+    console.error("[calculateIndividualMbti] Error calling FastAPI:", error.message);
+  }
+
   const mbtiData = {
     name: mbtiName,
     nickname: nickname,
-    aiDescription: "Not available for now",
+    aiDescription: aiDescription,
     coreExplain: coreExplain,
     eiPercent: Math.round(result.group1),
     snPercent: Math.round(result.group2),
     tfPercent: Math.round(result.group3),
     jpPercent: Math.round(result.group4),
+    matchingPartnerAndReason: matchingPartnerAndReason,
+    clashedMbtiAndHowToSolve: clashedMbtiAndHowToSolve,
   };
 
   if (userId) {

@@ -25,6 +25,8 @@ services:
     env_file:
       - ./backend/.env
       - ./backend/docker.env
+    environment:
+      - FASTAPI_URL=http://backend_python:8000
     ports:
       - 5175:5175
     volumes:
@@ -33,6 +35,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      backend_python:
+        condition: service_started
+  
+  backend_python:
+    build:
+      context: ./backend-python
+      dockerfile: dockerfile
+    image: backend_python:1.0.0
+    container_name: backend_python
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend-python:/app
   
   mbti_frontend:
     build: ./frontend

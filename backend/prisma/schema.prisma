@@ -40,6 +40,9 @@ model IndividualMBTI {
   tfPercent     Int    @map("TF%")
   jpPercent     Int    @map("JP%")
 
+  matchingPartnerAndReason      String? @db.Text @map("matching_partner_and_reason")
+  clashedMbtiAndHowToSolve      String? @db.Text @map("clashed_mbti_and_how_to_solve")
+
   userId        String?  @map("user_id") 
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 

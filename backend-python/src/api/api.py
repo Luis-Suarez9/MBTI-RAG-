@@ -20,19 +20,13 @@ app.add_middleware(
 
 # 2. Define the data structure you expect to receive (Pydantic Model)
 class MBTIRequest(BaseModel):
-    user_id: str
     answers: list[int]
-    #it recieve waht ever frontend has sent it here
+    mbti: list[dict]
     
 class MBTIResponse(BaseModel):
-    name: str
-    nickname: str
     aiDescription: str
-    coreExplain: str
-    eiPercent: int
-    snPercent: int
-    tfPercent: int
-    jpPercent: int
+    matching_partner_and_reason: str
+    clashed_mbti_and_how_to_solve: str
 
 # 3. API Endpoints
 
@@ -43,17 +37,12 @@ def analyze_mbti(payload: MBTIRequest):
     """
     print(f"Processing answers for user: {payload.user_id}")
     print(f"Data received: {payload.answers}")
-    
+
     # TODO: Add your actual MBTI calculation logic here
     # For now, we return a mock result that strictly matches the MBTIResponse model
-    
+
     return MBTIResponse(
-        name="INTJ",
-        nickname="The Architect",
-        aiDescription="Imaginative and strategic thinkers, with a plan for everything.",
-        coreExplain="You lead with Introverted Intuition, focusing on underlying patterns.",
-        eiPercent=75,
-        snPercent=65,
-        tfPercent=80,
-        jpPercent=90
+        aiDescription="not_available",
+        matching_partner_and_reason="dummy text",
+        clashed_mbti_and_how_to_solve="dummy text"
     )
