@@ -181,6 +181,25 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
               {mbtiRecord.aiDescription || 'No AI-driven behavioral analysis available.'}
             </p>
           </div>
+
+          {/* Compatibility Cards */}
+          <div className="bg-[#f7f6f2] p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="font-bold text-gray-800 mb-3 tracking-wide">
+              💚 MBTI BEST MATCH
+            </h3>
+            <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+              {mbtiRecord.matchingPartnerAndReason || 'No matching partner information available.'}
+            </p>
+          </div>
+
+          <div className="bg-[#f7f6f2] p-6 rounded-xl shadow-sm border border-gray-100">
+            <h3 className="font-bold text-gray-800 mb-3 tracking-wide">
+              ⚡ MBTI WORST MATCH
+            </h3>
+            <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+              {mbtiRecord.clashedMbtiAndHowToSolve || 'No clash information available.'}
+            </p>
+          </div>
         </div>
 
         {/* Bottom Controls */}

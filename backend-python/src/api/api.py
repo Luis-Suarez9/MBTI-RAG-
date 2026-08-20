@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from src.utils.geminiRequest import Gemini_api
 
 app = FastAPI(title="MBTI API")
 
@@ -20,7 +21,7 @@ app.add_middleware(
 
 # 2. Define the data structure you expect to receive (Pydantic Model)
 class MBTIRequest(BaseModel):
-    answers: list[int]
+    answers: list[dict]
     mbti: list[dict]
     
 class MBTIResponse(BaseModel):
@@ -35,14 +36,18 @@ def analyze_mbti(payload: MBTIRequest):
     """
     Receives MBTI answers from the express service and processes them.
     """
-    print(f"Processing answers for user: {payload.user_id}")
     print(f"Data received: {payload.answers}")
 
+    gemini_api = Gemini_api()
+    aiDescription, matching_partner_and_reason, clashed_mbti_and_how_to_solve = gemini_api.call_gemini(
+        answers=payload.answers,
+        mbti=payload.mbti,
+    )
     # TODO: Add your actual MBTI calculation logic here
     # For now, we return a mock result that strictly matches the MBTIResponse model
 
     return MBTIResponse(
-        aiDescription="not_available",
-        matching_partner_and_reason="dummy text",
-        clashed_mbti_and_how_to_solve="dummy text"
+        aiDescription=aiDescription,
+        matching_partner_and_reason=matching_partner_and_reason,
+        clashed_mbti_and_how_to_solve=clashed_mbti_and_how_to_solve
     )

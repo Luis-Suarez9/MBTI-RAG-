@@ -2,6 +2,7 @@
 require('dotenv').config();
 const individual_mbtiModel = require('../models/individual_mbtiModel');
 const calculate = require('../utils/calculator');
+const { analyzeMbti } = require('../utils/request_fastapi');
 const { mbtiProfiles } = require('../libs/mbtiDetail');
 
 // ─── CRUD ────────────────────────────────────────────────────────────────────
@@ -103,27 +104,17 @@ const calculateIndividualMbti = async (req, res) => {
   const result = await calculate.calculator(payload);
   const mbtiName = `${result.EorI}${result.SorN}${result.TorF}${result.JorP}`;
 
-  // ── Summary log (visible in Docker logs) ──────────────────────────────────
-  console.log('─'.repeat(50));
-  console.log('[calculateIndividualMbti] MBTI Dimension Results:');
-  console.log(`  Group 1 (E/I - Q1–12):   ${result.group1}%`);
-  console.log(`  Group 2 (S/N - Q13–24):  ${result.group2}%`);
-  console.log(`  Group 3 (T/F - Q25–36):  ${result.group3}%`);
-  console.log(`  Group 4 (J/P - Q37–48):  ${result.group4}%`);
-  console.log('─'.repeat(50));
   // ──────────────────────────────────────────────────────────────────────────
   // make request to fast api to get ai description
   // create individual mbti from user id too
   // if user not login just like send response and like the ai description part just have them wait
   const userId = req.user?.userId || null;
-  console.log('[calculateIndividualMbti] req.user:', req.user);
-  console.log('[calculateIndividualMbti] userId:', userId);
 
   const matchedProfile = mbtiProfiles.find(p => p.name.includes(mbtiName));
   const nickname = matchedProfile ? matchedProfile.title : "Not available for now";
   const coreExplain = matchedProfile ? matchedProfile.coreDescription : "Not available for now";
 
-  const answers = (Array.isArray(payload) ? payload : Object.values(payload)).map(item => item.score || 0);
+  const answers = Array.isArray(payload) ? payload : Object.values(payload);
   const mbtiPayload = [{
     name: mbtiName,
     eiPercent: Math.round(result.group1),
@@ -132,29 +123,11 @@ const calculateIndividualMbti = async (req, res) => {
     jpPercent: Math.round(result.group4),
   }];
 
-  let aiDescription = "Not available for now";
-  let matchingPartnerAndReason = "Not available for now";
-  let clashedMbtiAndHowToSolve = "Not available for now";
-
-  try {
-    const fastApiUrl = process.env.FASTAPI_URL || 'http://localhost:8000';
-    const response = await fetch(`${fastApiUrl}/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers, mbti: mbtiPayload })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      aiDescription = data.aiDescription || aiDescription;
-      matchingPartnerAndReason = data.matching_partner_and_reason || matchingPartnerAndReason;
-      clashedMbtiAndHowToSolve = data.clashed_mbti_and_how_to_solve || clashedMbtiAndHowToSolve;
-    } else {
-      console.error("[calculateIndividualMbti] FastAPI returned status:", response.status);
-    }
-  } catch (error) {
-    console.error("[calculateIndividualMbti] Error calling FastAPI:", error.message);
-  }
+  const {
+    aiDescription,
+    matchingPartnerAndReason,
+    clashedMbtiAndHowToSolve,
+  } = await analyzeMbti(answers, mbtiPayload);
 
   const mbtiData = {
     name: mbtiName,

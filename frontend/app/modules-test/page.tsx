@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AccountButton from '../components/accountButton';
 import Footer from '../components/footer';
+import './page.css';
 
 // This page runs in the browser, so use the publicly reachable backend URL.
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
@@ -109,6 +110,7 @@ export default function ModuleTestPage() {
   // State to store answers. Key format: `page-questionIndex`
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [validationMessage, setValidationMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const currentModule = modulesData[currentPage - 1];
   
@@ -152,6 +154,7 @@ export default function ModuleTestPage() {
       );
 
 
+      setIsLoading(true);
       try {
         const response = await fetch(`${API_URL}/api/individualMbtiRoutes/calculate`, {
           method: 'POST',
@@ -179,6 +182,7 @@ export default function ModuleTestPage() {
         }
       } catch (error) {
         console.error('Error submitting MBTI answers:', error);
+        setIsLoading(false);
         setValidationMessage(
           error instanceof Error ? error.message : 'Unable to submit your answers. Please try again.',
         );
@@ -195,6 +199,57 @@ export default function ModuleTestPage() {
   };
 
   return (
+    <>
+    {/* ── AI Evaluation Loading Overlay ── */}
+    {isLoading && (
+      <div
+        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: "url('/normalBackground.png')" }}
+      >
+        {/* Dark frosted-glass scrim */}
+        <div className="absolute inset-0 bg-[rgba(30,40,32,0.45)] backdrop-blur-sm" />
+
+        {/* Card */}
+        <div className="relative z-10 flex flex-col items-center gap-8 rounded-3xl border border-[rgba(120,143,123,0.55)] bg-[rgba(240,245,240,0.30)] px-14 py-12 text-center shadow-[0_8px_48px_rgba(0,0,0,0.35)] w-[90vw] max-w-[420px]">
+
+          {/* Spinner ring + brain icon */}
+          <div className="relative h-20 w-20">
+            {/* Static background ring */}
+            <div className="absolute inset-0 rounded-full border-[3px] border-[rgba(120,143,123,0.25)]" />
+            {/* Spinning coloured ring */}
+            <div
+              className="absolute inset-0 rounded-full border-[3px] border-transparent animate-mbti-spin"
+              style={{ borderTopColor: '#788f7b', borderRightColor: '#92c79e' }}
+            />
+            {/* Brain emoji */}
+            <div className="absolute inset-0 flex items-center justify-center text-4xl animate-mbti-pulse">
+              🧠
+            </div>
+          </div>
+
+          {/* Text */}
+          <div>
+            <p className="mb-2 font-serif text-xl font-bold tracking-wide text-[#e8f0e9]">
+              AI is evaluating you…
+            </p>
+            <p className="text-sm leading-relaxed text-[rgba(200,220,202,0.80)]">
+              Our AI is analysing your responses and building your personalised MBTI profile. This may take a moment.
+            </p>
+          </div>
+
+          {/* Bouncing dots */}
+          <div className="flex items-center gap-2">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-2.5 w-2.5 rounded-full bg-[#788f7b] animate-mbti-bounce"
+                style={{ animationDelay: `${i * 0.2}s` }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
     <div
       className="min-h-screen flex flex-col font-sans relative bg-gray-100"
       style={{
@@ -323,5 +378,6 @@ export default function ModuleTestPage() {
       {/* Shared Footer Component */}
       <Footer />
     </div>
+    </>
   );
 }

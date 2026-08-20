@@ -6,6 +6,8 @@ export interface IndividualMBTI {
   nickname?: string | null;
   aiDescription?: string | null;
   coreExplain?: string | null;
+  matchingPartnerAndReason?: string | null;
+  clashedMbtiAndHowToSolve?: string | null;
   eiPercent: number;
   snPercent: number;
   tfPercent: number;
