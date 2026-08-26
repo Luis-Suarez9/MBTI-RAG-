@@ -30,11 +30,11 @@ class Gemini_api:
         prompt = f"""You are an expert psycologist here who can somehow code. 
                     I want you to take a look at user's answers to all 48 mbti question {answers} and the mbti that I got from using my web algorithm {mbti}. 
                     From those information please write a short paragraph for these 3 aspect: 
-                    First, your own way of describing this person personality. Since everyone may not be fully on e or i s or n so on I want you to describe this person in your own word looking at mbti and their answer to questions. 
+                    First, your own way of describing this person personality. Since everyone may not be fully on e or i s or n so on I want you to describe this person in your own word looking at how they answer to questions mainly, and reference to their mbti because this person might have some contradictive personality to their mbti. 
                     Second, MBTI best match who can they get along best and why give me 2 of that. 
                     Third, MBTI clash tell me what MBTI can be clash with this person: why clash and how to avoid. 
                     Note I want you to structure your answer exactly like this ai_description: one short paragraph for it, clashed_mbti_and_how_to_solve: one short paragraph for it, matching_partner_and_reason: one short paragraph for it. 
-                    Also try to humanize the language too. 
+                    Also try to humanize the language too. Do not use hard english word.
                     
                     Return ONLY a valid JSON object with exactly these three keys. Do not include markdown formatting like ```json.
                     {{

@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Footer from "./components/footer";
 import AuthHeaderControl from "./components/accountButton";
+import { isAuthenticated } from "./libs/auth";
 // Import the mock data schema
 import { mbtiProfiles } from "./libs/mockMBTI";
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const isGuest = useSyncExternalStore(
+    () => () => {},
+    () => !isAuthenticated(),
+    () => false,
+  );
   const [cardsToShow, setCardsToShow] = useState(() => {
     if (typeof window !== "undefined") {
       const width = window.innerWidth;
@@ -86,12 +92,19 @@ export default function Home() {
             This is a cognitive assessment to explore your personality preferences and psychologoecological preference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
-            <a
-              href="/modules-test"
-              className="flex-1 bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center"
-            >
-              Try the test?
-            </a>
+            <div className="group relative flex-1">
+              <a
+                href="/modules-test"
+                className="block w-full bg-[#839b88] hover:bg-[#728877] text-white py-3 rounded-md text-lg font-bold shadow-md transition-colors uppercase tracking-wider text-center"
+              >
+                Try the test?
+              </a>
+              {isGuest && (
+                <p className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-72 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-center text-xs leading-relaxed text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                  If u have not login after submitting and finishing the test, capture your result screen first. Do not close or refresh the page, or your result may be lost.
+                </p>
+              )}
+            </div>
 
             <a
               href="/result-history"

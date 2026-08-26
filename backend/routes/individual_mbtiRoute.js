@@ -5,19 +5,16 @@ const individualMbtiController = require('../controllers/individual_mbtiControll
 const { verifyToken, optionalVerifyToken } = require('../middleware/verifyToken');
 const { verifyCsrfOrigin } = require('../utils/authCookies');
 
-// Create
-router.post('/', individualMbtiController.createIndividual_mbti);
-// Read all
-router.get('/', individualMbtiController.getAllIndividual_mbtis);
-// Read by user id (placed before /:id to prevent route collisions)
-router.get('/user/:userId', verifyToken, individualMbtiController.getIndividual_mbtiByUserId);
-// Read by record id
-router.get('/:id', optionalVerifyToken, individualMbtiController.getIndividual_mbtiById);
-// Update
-router.put('/:id', individualMbtiController.updateIndividual_mbti);
-// Delete
-router.delete('/:id', verifyToken, verifyCsrfOrigin, individualMbtiController.deleteIndividual_mbti);
-// Submit (accept weird JSON)
+// Submit quiz answers & compute MBTI result (guest or authenticated)
 router.post('/calculate', optionalVerifyToken, individualMbtiController.calculateIndividualMbti);
+
+// Read user test history (strictly authenticated for that user)
+router.get('/user/:userId', verifyToken, individualMbtiController.getIndividual_mbtiByUserId);
+
+// Read test detail by record ID
+router.get('/:id', optionalVerifyToken, individualMbtiController.getIndividual_mbtiById);
+
+// Delete test record (owner auth user or system guest cleanup)
+router.delete('/:id', optionalVerifyToken, verifyCsrfOrigin, individualMbtiController.deleteIndividual_mbti);
 
 module.exports = router;

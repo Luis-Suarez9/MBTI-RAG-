@@ -2,6 +2,7 @@ import React from 'react';
 import { cookies } from 'next/headers';
 import AccountButton from '../../components/accountButton';
 import Footer from '../../components/footer';
+import GuestDetailCleanup from '../../components/guestDetailCleanup';
 import { Trait } from '@/types/Trait';
 import { IndividualMBTI } from '@/types/IndividualMBTI';
 
@@ -23,6 +24,7 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
   const cookieHeader = sessionCookie ? `${SESSION_COOKIE_NAME}=${sessionCookie.value}` : '';
 
   let mbtiRecord: IndividualMBTI | null = null;
+  let errorMessage = '';
   try {
     const res = await fetch(`${API_URL}/api/individualMbtiRoutes/${id}`, {
       cache: 'no-store',
@@ -30,15 +32,35 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
     });
     if (res.ok) {
       mbtiRecord = await res.json();
+    } else {
+      let backendMessage = '';
+      try {
+        const errorBody = await res.json();
+        if (typeof errorBody.error === 'string') {
+          backendMessage = errorBody.error;
+        } else if (typeof errorBody.message === 'string') {
+          backendMessage = errorBody.message;
+        } else {
+          backendMessage = '';
+        }
+      } catch {
+        // The backend may return an empty or non-JSON error response.
+      }
+
+      const statusMessage = `${res.status} ${res.statusText}`.trim();
+      errorMessage = backendMessage ? `${statusMessage}: ${backendMessage}` : statusMessage;
     }
   } catch (error) {
     console.error(`Error fetching MBTI record from API (URL: ${API_URL}/api/individualMbtiRoutes/${id}):`, error);
+    errorMessage = 'Unable to connect to the backend.';
   }
 
   if (!mbtiRecord) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-4">
-        <p className="text-lg text-gray-700 font-semibold">MBTI Record not found.</p>
+        <p className="text-lg text-gray-700 font-semibold">
+          {errorMessage || 'MBTI record not found or you do not have access.'}
+        </p>
         <a href="/" className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium">
           BACK TO HOME
         </a>
@@ -211,11 +233,7 @@ export default async function TestDetailPage({ params }: { params: Promise<{ id:
               </button>
             </a>
           ) : (
-            <a href="/">
-              <button className="bg-[#829985] text-white px-6 py-2 rounded shadow-sm hover:bg-[#6b826e] transition-colors font-medium cursor-pointer">
-                BACK TO HOME
-              </button>
-            </a>
+            <GuestDetailCleanup id={id} />
           )}
         </div>
       </div>

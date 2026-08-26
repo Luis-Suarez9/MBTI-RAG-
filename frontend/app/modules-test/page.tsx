@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AccountButton from '../components/accountButton';
 import Footer from '../components/footer';
+import { grantTestDetailAccess } from '@/app/libs/accessToken';
 import './page.css';
 
 // This page runs in the browser, so use the publicly reachable backend URL.
@@ -127,6 +128,11 @@ export default function ModuleTestPage() {
     setValidationMessage('');
   };
 
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPage]);
+
   // Handle Next Page / Submit
   const handleNext = async () => {
     if (!isCurrentPageComplete) {
@@ -137,7 +143,6 @@ export default function ModuleTestPage() {
     if (currentPage < 8) {
       setCurrentPage((prev) => prev + 1);
       setValidationMessage('');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       const submissionPayload = Object.entries(questionsData).flatMap(([modulePage, questions]) =>
         Object.entries(questions).map(([question, weight], questionIndex) => {
@@ -176,6 +181,8 @@ export default function ModuleTestPage() {
         console.log('MBTI calculation result:', responseData);
 
         if (responseData?.id) {
+          // Grant one-time access token so middleware allows this navigation.
+          grantTestDetailAccess(responseData.id);
           router.push(`/test-detail/${responseData.id}`);
         } else {
           router.push('/test-detail');
@@ -194,7 +201,6 @@ export default function ModuleTestPage() {
   const handleBack = () => {
     if (currentPage > 1) {
       setCurrentPage((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

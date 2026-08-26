@@ -8,39 +8,27 @@ const { mbtiProfiles } = require('../libs/mbtiDetail');
 // ─── CRUD ────────────────────────────────────────────────────────────────────
 
 /**
- * Create a new Individual MBTI record.
- */
-const createIndividual_mbti = async (req, res) => {
-  const data = req.body; // fields matching Prisma model
-  const newRecord = await individual_mbtiModel.createIndividual_mbti(data);
-  res.status(201).json({ message: 'Individual MBTI created', individual_mbti: newRecord });
-};
-
-/**
- * Retrieve all Individual MBTI records.
- */
-const getAllIndividual_mbtis = async (req, res) => {
-  const records = await individual_mbtiModel.getAllIndividual_mbtis();
-  res.status(200).json(records);
-};
-
-/**
  * Retrieve a single Individual MBTI by ID.
  */
 const getIndividual_mbtiById = async (req, res) => {
   const { id } = req.params;
   const record = await individual_mbtiModel.getIndividual_mbtiById(id);
 
-  // Return 403 whether the record doesn't exist OR belongs to someone else —
-  // deliberately avoids leaking that the record exists at all.
   if (!record) {
     return res.status(404).json({ error: 'Individual MBTI not found' });
   }
 
-  // If the record belongs to a registered user, enforce strict ownership
   if (record.userId) {
+    // Owned record — only the matching authenticated user may read it.
     if (!req.user || String(record.userId) !== String(req.user.userId)) {
-      return res.status(403).json({ error: 'Individual MBTI not found' });
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+  } else {
+    // Guest record — authenticated users are blocked.
+    // Access is gated on the frontend by a one-time token; no auth user
+    // should ever be fetching a record that has no owner.
+    if (req.user) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
   }
 
@@ -64,22 +52,6 @@ const getIndividual_mbtiByUserId = async (req, res) => {
 };
 
 /**
- * Update an existing Individual MBTI record.
- */
-const updateIndividual_mbti = async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-
-  const existingRecord = await individual_mbtiModel.getIndividual_mbtiById(id);
-  if (!existingRecord) {
-    return res.status(404).json({ error: 'Individual MBTI not found' });
-  }
-
-  const updated = await individual_mbtiModel.updateIndividual_mbti(id, data);
-  res.status(200).json({ message: 'Individual MBTI updated', individual_mbti: updated });
-};
-
-/**
  * Delete an Individual MBTI record.
  */
 const deleteIndividual_mbti = async (req, res) => {
@@ -89,8 +61,19 @@ const deleteIndividual_mbti = async (req, res) => {
   if (!existingRecord) {
     return res.status(404).json({ error: 'Individual MBTI not found' });
   }
-  if (existingRecord.userId !== req.user.userId) {
-    return res.status(403).json({ error: 'Forbidden' });
+
+  if (existingRecord.userId) {
+    // Owned record — only the matching authenticated owner can delete it.
+    // Guests (no req.user) and mismatched auth users are both rejected.
+    if (!req.user || String(existingRecord.userId) !== String(req.user.userId)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+  } else {
+    // Guest record — only an unauthenticated request (the GuestCleanup
+    // component) may delete it. Authenticated users cannot touch it.
+    if (req.user) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
   }
 
   await individual_mbtiModel.deleteIndividual_mbti(id);
@@ -159,11 +142,8 @@ const calculateIndividualMbti = async (req, res) => {
 };
 
 module.exports = {
-  createIndividual_mbti,
-  getAllIndividual_mbtis,
   getIndividual_mbtiById,
   getIndividual_mbtiByUserId,
-  updateIndividual_mbti,
   deleteIndividual_mbti,
   calculateIndividualMbti,
 };

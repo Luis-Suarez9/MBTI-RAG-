@@ -90,7 +90,14 @@ export default function ResultHistoryPage() {
         }
 
         const data = await res.json();
-        setHistoryData(Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) {
+          const sortedHistory = [...data].sort((firstRecord, secondRecord) => (
+            new Date(firstRecord.createdAt).getTime() - new Date(secondRecord.createdAt).getTime()
+          ));
+          setHistoryData(sortedHistory);
+        } else {
+          setHistoryData([]);
+        }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Error fetching history';
         console.error('Error fetching history:', err);
