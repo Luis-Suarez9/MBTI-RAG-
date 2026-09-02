@@ -1,30 +1,27 @@
 import os
-from dotenv import load_dotenv
-from google import genai
-from google.genai.errors import APIError
 import json
 
-class Gemini_api:
+from dotenv import load_dotenv
+from groq import Groq
+
+class Groq_api:
     _instance = None
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(Gemini_api, cls).__new__(cls)
+            cls._instance = super(Groq_api, cls).__new__(cls)
             load_dotenv()
-            cls._instance.__my_api_key = os.getenv("GEMINI_API_KEY")
-            cls._instance.__client = genai.Client(api_key=cls._instance.__my_api_key)
+            cls._instance.__my_api_key = os.getenv("GROQ_API_KEY")
+            cls._instance.__client = Groq(api_key=cls._instance.__my_api_key)
             cls._instance.__MODELS = [
-                "gemini-3.5-flash", 
-                "gemini-3.1-flash-lite",
-                "gemini-3-flash",
-                "gemini-2.5-flash", 
-                "gemini-2.5-pro", 
-                "gemini-2-flash", 
-                "gemini-2-flash-lite"
+                "llama-3.1-8b-instant",       # fast + cheap on limits
+                "openai/gpt-oss-20b",         # stronger reasoning
+                "llama-3.3-70b-versatile",    # stronger general model
+                "openai/gpt-oss-120b",        # strongest fallback
             ]
         return cls._instance
 
-    def call_gemini(self, answers: list[int], mbti: list[dict]):
+    def call_groq(self, answers: list[int], mbti: list[dict]):
         
         # Your exact original wording, plus the data variables and JSON instruction
         prompt = f"""You are an expert psycologist here who can somehow code. 
@@ -34,7 +31,7 @@ class Gemini_api:
                     Second, MBTI best match who can they get along best and why give me 2 of that. 
                     Third, MBTI clash tell me what MBTI can be clash with this person: why clash and how to avoid. 
                     Note I want you to structure your answer exactly like this ai_description: one short paragraph for it, clashed_mbti_and_how_to_solve: one short paragraph for it, matching_partner_and_reason: one short paragraph for it. 
-                    Also try to humanize the language too. Do not use hard english word.
+                    Also try to humanize the language too. Make the user feel like you are trying to predict them(with out explicitly telling them) and they are having fun like ohh an ai predict me. You can achieve this by instead of saying this person or they you say 'you tends to ...' or 'you may perhap be ...'
                     
                     Return ONLY a valid JSON object with exactly these three keys. Do not include markdown formatting like ```json.
                     {{
@@ -46,14 +43,15 @@ class Gemini_api:
         # Try each model until one succeeds
         for model_name in self.__MODELS:
             try:
-                response = self.__client.models.generate_content(
+                response = self.__client.chat.completions.create(
                     model=model_name,
-                    contents=prompt,
-                    config={"response_mime_type": "application/json"} 
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
                 )
-                
+
                 # Parse the text into a dictionary
-                response_dict = json.loads(response.text)
+                response_text = response.choices[0].message.content or "{}"
+                response_dict = json.loads(response_text)
                 
                 # Extract your three distinct strings
                 ai_desc = response_dict.get("ai_description", "")

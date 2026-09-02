@@ -111,3 +111,6 @@ function log(msg: string) {
     browser.once('disconnected', () => resolve());
   });
 })();
+
+
+//npx ts-node playwright_test/automate_answerquestion.ts  

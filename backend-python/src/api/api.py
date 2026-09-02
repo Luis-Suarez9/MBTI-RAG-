@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from src.utils.geminiRequest import Gemini_api
+from src.utils.groqRequest import Groq_api
 
 app = FastAPI(title="MBTI API")
 
@@ -38,8 +38,8 @@ def analyze_mbti(payload: MBTIRequest):
     """
     print(f"Data received: {payload.answers}")
 
-    gemini_api = Gemini_api()
-    aiDescription, matching_partner_and_reason, clashed_mbti_and_how_to_solve = gemini_api.call_gemini(
+    groq_api = Groq_api()
+    aiDescription, matching_partner_and_reason, clashed_mbti_and_how_to_solve = groq_api.call_groq(
         answers=payload.answers,
         mbti=payload.mbti,
     )
