@@ -18,3 +18,4 @@ postman
 .graphify-out
 db.env
 docker.env
+rag-tutorial/

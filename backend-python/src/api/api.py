@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from src.schemas import QuizAnswer
 from src.utils.groqRequest import Groq_api
 
 app = FastAPI(title="MBTI API")
@@ -21,7 +22,7 @@ app.add_middleware(
 
 # 2. Define the data structure you expect to receive (Pydantic Model)
 class MBTIRequest(BaseModel):
-    answers: list[dict]
+    answers: list[QuizAnswer] = Field(min_length=1)
     mbti: list[dict]
     
 class MBTIResponse(BaseModel):

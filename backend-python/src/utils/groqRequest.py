@@ -3,6 +3,7 @@ import json
 
 from dotenv import load_dotenv
 from groq import Groq
+from src.schemas import QuizAnswer
 
 class Groq_api:
     _instance = None
@@ -21,11 +22,18 @@ class Groq_api:
             ]
         return cls._instance
 
-    def call_groq(self, answers: list[int], mbti: list[dict]):
+    def call_groq(self, answers: list[QuizAnswer], mbti: list[dict]):
         
-        # Your exact original wording, plus the data variables and JSON instruction
-        prompt = f"""You are an expert psycologist here who can somehow code. 
-                    I want you to take a look at user's answers to all 48 mbti question {answers} and the mbti that I got from using my web algorithm {mbti}. 
+        answers_json = json.dumps([answer.model_dump() for answer in answers])
+        # Include the validated answer objects and their signed weights.
+        prompt = f"""You are an expert psycologist here who can code. 
+                    I want you to take a look at user's answers to all 48 mbti question {answers_json} and the mbti that I got from using my web algorithm {mbti}. (please note that the answer -3 to 3 is for howstrong they agree for postivie and negative when disagree the further the number from 0 the stronger they agree and disagree to question moreover pelase consider the weight of the question too u can look at it and see if it si positive or negative question and hwo much it affect the question determine people mbti)
+                    Each answer has question, questionNo, score, and weight. Score is agreement from -3 to 3; 0 is neutral.
+                    Weight is a signed scoring coefficient, not agreement or confidence. Its absolute value indicates relative influence.
+                    Use score * weight as the weighted contribution. For questions 1–12 positive contributions favor E and negative I;
+                    for 13–24 positive favors S and negative N; for 25–36 positive favors T and negative F; for 37–48 positive favors J and negative P.
+                    A negative weight reverses the scoring direction; it does not mean the user disagrees. Neutral scores contribute zero regardless of weight.
+                    Consider these contributions alongside the question wording and supplied MBTI percentages when describing nuances.
                     From those information please write a short paragraph for these 3 aspect: 
                     First, your own way of describing this person personality. Since everyone may not be fully on e or i s or n so on I want you to describe this person in your own word looking at how they answer to questions mainly, and reference to their mbti because this person might have some contradictive personality to their mbti. 
                     Second, MBTI best match who can they get along best and why give me 2 of that. 
