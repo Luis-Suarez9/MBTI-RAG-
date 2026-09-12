@@ -1,4 +1,11 @@
 fastapi==0.139.0
-groq==1.7.0
+groq==0.30.0
 python-dotenv==1.2.2
 uvicorn==0.51.0
+faiss-cpu
+numpy<2
+langchain-classic
+langchain-community
+langchain-google-genai
+langchain-groq
+pypdf

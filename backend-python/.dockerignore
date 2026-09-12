@@ -32,3 +32,5 @@ docker-compose.yaml
 
 # MacOS
 .DS_Store
+*.ipynb
+data/embeddings/

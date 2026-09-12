@@ -40,12 +40,14 @@ def analyze_mbti(payload: MBTIRequest):
     print(f"Data received: {payload.answers}")
 
     groq_api = Groq_api()
-    aiDescription, matching_partner_and_reason, clashed_mbti_and_how_to_solve = groq_api.call_groq(
+    aiDescription = groq_api.call_groq(
         answers=payload.answers,
         mbti=payload.mbti,
     )
-    # TODO: Add your actual MBTI calculation logic here
-    # For now, we return a mock result that strictly matches the MBTIResponse model
+    matching_partner_and_reason, clashed_mbti_and_how_to_solve = groq_api.call_compatibility(
+        mbti=payload.mbti,
+        answers=payload.answers,
+    )
 
     return MBTIResponse(
         aiDescription=aiDescription,

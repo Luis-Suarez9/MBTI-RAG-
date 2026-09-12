@@ -1,1 +1,4 @@
 __pycache__/
+*.ipynb
+data/embeddings/
+!rag_pipeline.ipynb
