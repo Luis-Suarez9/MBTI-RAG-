@@ -1,3 +1,6 @@
+const { loadSecrets } = require('./utils/secrets');
+
+loadSecrets();
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors'); // Recommended for handling frontend requests

@@ -20,3 +20,4 @@ postman
 db.env
 docker.env
 rag-tutorial/
+secret.md

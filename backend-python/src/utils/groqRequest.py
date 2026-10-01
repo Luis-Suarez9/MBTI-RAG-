@@ -6,6 +6,7 @@ from groq import Groq
 from src.schemas import QuizAnswer
 from src.utils.query import build_compatibility_prompt
 from src.utils.retriver import retriever
+from src.utils.secrets import load_secrets
 
 class Groq_api:
     _instance = None
@@ -13,7 +14,10 @@ class Groq_api:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(Groq_api, cls).__new__(cls)
+            # Keep local .env support for development; Docker Compose loads
+            # the ignored env files through /run/secrets instead.
             load_dotenv()
+            load_secrets()
             cls._instance.__my_api_key = os.getenv("GROQ_API_KEY")
             cls._instance.__client = Groq(api_key=cls._instance.__my_api_key)
             cls._instance.__MODELS = [

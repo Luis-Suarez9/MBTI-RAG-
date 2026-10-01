@@ -6,10 +6,13 @@ services:
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
-    env_file:
-      - ./.env
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    secrets:
+      - mysql_root_password
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$(cat /run/secrets/mysql_root_password)"]
       interval: 5s
       timeout: 10s
       retries: 20
@@ -22,8 +25,13 @@ services:
     image: mbti_express:1.0.0
     container_name: mbti_express
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      PORT: ${PORT:-5175}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      FASTAPI_URL: ${FASTAPI_URL:-http://backend_python:8000}
+    secrets:
+      - app_env
+      - backend_env
     ports:
       - 5175:5175
     depends_on:
@@ -41,8 +49,11 @@ services:
     restart: always
     ports:
       - 8000:8000
-    volumes:
-      - ./backend-python:/app
+    environment:
+      PYTHONUNBUFFERED: "1"
+    secrets:
+      - app_env
+      - backend_python_env
   
   mbti_frontend:
     build:
@@ -53,8 +64,6 @@ services:
     image: supermarket_frontend:1.0.0
     container_name: supermarket_frontend
     restart: always
-    env_file:
-      - ./.env
     environment:
       PORT: 3000
     ports:
@@ -64,3 +73,15 @@ services:
 
 volumes:
   mysql_data:
+
+secrets:
+  # These are mounted as files, never injected as container environment vars.
+  # The source files are ignored by git and must already exist locally.
+  mysql_root_password:
+    environment: MYSQL_ROOT_PASSWORD
+  app_env:
+    file: ./.env
+  backend_env:
+    file: ./backend/.env
+  backend_python_env:
+    file: ./backend-python/.env
