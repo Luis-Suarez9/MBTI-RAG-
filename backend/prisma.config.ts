@@ -3,20 +3,18 @@
 import "dotenv/config";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { parse } from "dotenv";
 import { defineConfig } from "prisma/config";
 
-function loadSecretEnvFile(secretName: string): void {
+function loadSecret(secretName: string, environmentName: string): void {
   const secretPath = join("/run/secrets", secretName);
   if (!existsSync(secretPath)) {
     return;
   }
 
-  Object.assign(process.env, parse(readFileSync(secretPath, "utf8")));
+  process.env[environmentName] = readFileSync(secretPath, "utf8").trimEnd();
 }
 
-loadSecretEnvFile("app_env");
-loadSecretEnvFile("backend_env");
+loadSecret("database_url", "DATABASE_URL");
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

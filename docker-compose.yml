@@ -12,7 +12,7 @@ services:
     secrets:
       - mysql_root_password
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$(cat /run/secrets/mysql_root_password)"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$(cat /run/secrets/mysql_root_password)\""]
       interval: 5s
       timeout: 10s
       retries: 20
@@ -30,8 +30,14 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       FASTAPI_URL: ${FASTAPI_URL:-http://backend_python:8000}
     secrets:
-      - app_env
-      - backend_env
+      - database_url
+      - google_client_id
+      - jwt_secret
+      - db_host
+      - db_port
+      - db_user
+      - db_password
+      - db_name
     ports:
       - 5175:5175
     depends_on:
@@ -52,20 +58,22 @@ services:
     environment:
       PYTHONUNBUFFERED: "1"
     secrets:
-      - app_env
-      - backend_python_env
+      - gemini_api_key
+      - groq_api_key
+      - groq_backup_key
   
   mbti_frontend:
     build:
       context: ./frontend
       args:
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+        BACKEND_URL: ${BACKEND_URL:-http://mbti_express:5175}
     image: supermarket_frontend:1.0.0
     container_name: supermarket_frontend
     restart: always
     environment:
       PORT: 3000
+      BACKEND_URL: http://mbti_express:5175
     ports:
       - 3000:3000
     depends_on:
@@ -75,13 +83,29 @@ volumes:
   mysql_data:
 
 secrets:
-  # These are mounted as files, never injected as container environment vars.
-  # The source files are ignored by git and must already exist locally.
+  # These are mounted as individual files, never injected as container
+  # environment variables. The generated source files are ignored by git.
   mysql_root_password:
-    environment: MYSQL_ROOT_PASSWORD
-  app_env:
-    file: ./.env
-  backend_env:
-    file: ./backend/.env
-  backend_python_env:
-    file: ./backend-python/.env
+    file: ./.docker-secrets/mysql_root_password
+  database_url:
+    file: ./.docker-secrets/database_url
+  google_client_id:
+    file: ./.docker-secrets/google_client_id
+  jwt_secret:
+    file: ./.docker-secrets/jwt_secret
+  db_host:
+    file: ./.docker-secrets/db_host
+  db_port:
+    file: ./.docker-secrets/db_port
+  db_user:
+    file: ./.docker-secrets/db_user
+  db_password:
+    file: ./.docker-secrets/db_password
+  db_name:
+    file: ./.docker-secrets/db_name
+  gemini_api_key:
+    file: ./.docker-secrets/gemini_api_key
+  groq_api_key:
+    file: ./.docker-secrets/groq_api_key
+  groq_backup_key:
+    file: ./.docker-secrets/groq_backup_key

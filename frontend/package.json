@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:answers:install": "playwright install chromium",
+    "test:answers": "npm run test:answers:install && ts-node-esm playwright_test/automate_answerquestion.ts"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",

@@ -7,7 +7,7 @@ import Footer from '../components/footer';
 import { isAuthenticated, getUser } from '@/app/libs/auth';
 import { IndividualMBTI } from '@/types/IndividualMBTI';
 // 🌐 Global API URL from environment variable
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 
 

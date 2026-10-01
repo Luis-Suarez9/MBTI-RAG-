@@ -15,9 +15,9 @@ WORKDIR /app
 
 # NEXT_PUBLIC_* values are embedded into the browser bundle at build time.
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
-ARG NEXT_PUBLIC_BACKEND_URL
+ARG BACKEND_URL
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
-ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV BACKEND_URL=$BACKEND_URL
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -29,6 +29,7 @@ WORKDIR /app
 EXPOSE 3000
 
 ENV NODE_ENV=production
+ENV BACKEND_URL=http://mbti_express:5175
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund

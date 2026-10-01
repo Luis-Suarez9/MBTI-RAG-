@@ -21,3 +21,4 @@ db.env
 docker.env
 rag-tutorial/
 secret.md
+/.docker-secrets/

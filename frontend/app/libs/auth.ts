@@ -2,7 +2,10 @@
 import { AuthUser } from '@/types/AuthUser';
 export type { AuthUser };
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
+// Browser requests use the Next.js same-origin proxy. This keeps the backend
+// service name out of the browser and avoids treating browser localhost as the
+// Docker host.
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 const USER_KEY = 'mbti_user';
 
 /**

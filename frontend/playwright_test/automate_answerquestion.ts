@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 // ─────────────────────────────────────────────────────────────────
 // Config
 // ─────────────────────────────────────────────────────────────────
-const BASE_URL = 'http://localhost:3000';          // running Next.js dev server
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const TOTAL_PAGES = 8;                             // 8 modules
 const QUESTIONS_PER_PAGE = 6;                      // 6 questions per module
 const SCALE_VALUES = [-3, -2, -1, 0, 1, 2, 3];    // radio values matching scaleOptions
@@ -113,4 +113,4 @@ function log(msg: string) {
 })();
 
 
-//npx ts-node playwright_test/automate_answerquestion.ts  
+// npm run test:answers

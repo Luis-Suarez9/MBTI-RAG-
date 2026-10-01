@@ -15,7 +15,7 @@ class Groq_api:
         if cls._instance is None:
             cls._instance = super(Groq_api, cls).__new__(cls)
             # Keep local .env support for development; Docker Compose loads
-            # the ignored env files through /run/secrets instead.
+            # individual ignored secrets through /run/secrets instead.
             load_dotenv()
             load_secrets()
             cls._instance.__my_api_key = os.getenv("GROQ_API_KEY")

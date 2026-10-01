@@ -8,7 +8,7 @@ import { grantTestDetailAccess } from '@/app/libs/accessToken';
 import './page.css';
 
 // This page runs in the browser, so use the publicly reachable backend URL.
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 // Define the 8 modules based on the 4 MBTI dichotomies
 const modulesData = [

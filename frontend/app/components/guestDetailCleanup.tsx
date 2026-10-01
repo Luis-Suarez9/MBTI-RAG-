@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5175';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 interface GuestDetailCleanupProps {
   id: number;
