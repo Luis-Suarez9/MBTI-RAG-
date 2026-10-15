@@ -15,8 +15,12 @@ Use `db` as `DB_HOST`, `3306` as `DB_PORT`, and keep the database name and
 credentials consistent across the database variables and `DATABASE_URL`.
 With `DB_USER=root`, `DB_PASSWORD` must match `MYSQL_ROOT_PASSWORD`.
 
-Before
-starting Docker Compose, split the sensitive values into individual local
+`GOOGLE_CLIENT_ID` is passed directly to Express as an environment variable
+from `backend/.env` via the Compose `--env-file` option. It is not generated
+or mounted as a Docker secret. Use the same client ID for the frontend's
+`NEXT_PUBLIC_GOOGLE_CLIENT_ID`, which is supplied at build time.
+
+Before starting Docker Compose, split the sensitive values into individual local
 secret files:
 
 ```bash
@@ -27,4 +31,4 @@ docker compose --env-file frontend/.env --env-file backend/.env up --build
 The script creates `.docker-secrets/`, which is ignored by Git and protected
 with local file permissions. Compose mounts only the individual secrets needed
 by each service under `/run/secrets`; the env files are not copied into images
-or injected through container environment variables.
+or injected wholesale into container environment variables.

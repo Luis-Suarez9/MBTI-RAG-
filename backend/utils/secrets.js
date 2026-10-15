@@ -16,7 +16,6 @@ function loadSecret(secretName, environmentName) {
 
 function loadSecrets() {
   loadSecret('database_url', 'DATABASE_URL');
-  loadSecret('google_client_id', 'GOOGLE_CLIENT_ID');
   loadSecret('jwt_secret', 'JWT_SECRET');
   loadSecret('db_host', 'DB_HOST');
   loadSecret('db_port', 'DB_PORT');

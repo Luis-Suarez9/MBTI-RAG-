@@ -27,11 +27,11 @@ services:
     restart: always
     environment:
       PORT: ${PORT:-5175}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?Set GOOGLE_CLIENT_ID in backend/.env and pass --env-file backend/.env}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       FASTAPI_URL: ${FASTAPI_URL:-http://backend_python:8000}
     secrets:
       - database_url
-      - google_client_id
       - jwt_secret
       - db_host
       - db_port
@@ -89,8 +89,6 @@ secrets:
     file: ./.docker-secrets/mysql_root_password
   database_url:
     file: ./.docker-secrets/database_url
-  google_client_id:
-    file: ./.docker-secrets/google_client_id
   jwt_secret:
     file: ./.docker-secrets/jwt_secret
   db_host:

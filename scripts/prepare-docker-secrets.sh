@@ -50,7 +50,6 @@ python_env="$project_dir/backend-python/.env"
 
 read_value "$backend_env" MYSQL_ROOT_PASSWORD mysql_root_password
 read_value "$backend_env" DATABASE_URL database_url
-read_value "$backend_env" GOOGLE_CLIENT_ID google_client_id
 read_value "$backend_env" JWT_SECRET jwt_secret
 
 read_value "$backend_env" DB_HOST db_host
