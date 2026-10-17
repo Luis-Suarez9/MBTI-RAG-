@@ -43,21 +43,27 @@ const questionsData: Record<number, Record<string, number>> = {
     '12. I like to talk about my ideas out loud with others to make them better.': 1.1
   },
   3: {
-    '13. I trust real facts and things I can see more than ideas.': 1.3,
-    '14. I focus mostly on what is happening right now and practical details.': 1.1,
-    '15. I like tasks that have clear, step-by-step instructions.': 0.9,
-    '16. I trust my "gut feelings" and sudden ideas when things are complicated.': -1.2,
-    '17. I prefer looking at the big picture instead of getting stuck on small details.': -1.1,
-    '18. I like to solve completely new problems by thinking of creative ways.': -1.0
+    // S: Concrete & literal vs. N: Abstract & figurative
+    '13. I trust information that is literal, specific, and backed by tangible evidence.': 1.3,
+    '14. I prefer to focus on the reality of what is happening right now, rather than theories about it.': 1.1,
+    '15. I value practical, applicable solutions over fascinating but untested ideas.': 0.9,
+    
+    // N: Conceptual & theoretical vs. S: Grounded execution
+    '16. I naturally read between the lines and look for hidden meanings rather than taking things literally.': -1.2,
+    '17. I prefer building theoretical frameworks and looking at the big picture instead of managing the details.': -1.1,
+    '18. I am more energized by brainstorming future possibilities than by executing the current plan.': -1.0
   },
   4: {
-    '19. I value hands-on experience and common sense over using my imagination.': 1.4,
-    '20. I am good at remembering exact details and facts from the past.': 0.8,
-    '21. I like to solve problems using methods that have worked before.': 1.0,
-    '22. I naturally look for patterns and think about what might happen in the future.': -1.3,
-    '23. I really enjoy talking about big ideas and how things connect.': -1.2,
-    '24. I often spend time imagining new ways the world could work.': -1.4
-  },
+    // S: Experience & Reality vs. N: Novelty & Concepts
+    '19. I rely on my past experience and proven methods when tackling a difficult problem.': 1.4,
+    '20. I naturally notice and remember specific details about my physical environment.': 0.8,
+    '21. I prefer conversations that are grounded in real-world events and practical matters.': 1.0,
+    
+    // N: Patterns & Abstraction vs. S: Isolated Facts
+    '22. I naturally see how seemingly unrelated concepts connect to form a larger pattern.': -1.3,
+    '23. I really enjoy talking about abstract theories, philosophy, and complex systems.': -1.2,
+    '24. I often get so caught up in my thoughts and ideas that I lose track of my physical surroundings.': -1.4
+  }
   5: {
     '25. I use facts and logic to make hard choices, not my feelings.': 1.4,
     '26. I care more about finding the truth than making sure everyone gets along.': 1.2,
