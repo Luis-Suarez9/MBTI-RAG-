@@ -30,7 +30,7 @@ const questionsData: Record<number, Record<string, number>> = {
     '1. I feel full of energy when I am with a big group of people.': 1.2,
     '2. I like busy places where I can talk to many people.': 1.0,
     '3. I like to watch how a group acts before I join in.': -0.8,
-    '4. I prefer having a few very close friends instead of a large group of people I know.': -1.2,
+    '4. I prefer having a few very close friends instead of knowing many people.': -1.2,
     '5. I much prefer writing my thoughts down instead of speaking them.': -1.0,
     '6. I often become the center of attention in a group.': 1.5
   },
@@ -43,7 +43,7 @@ const questionsData: Record<number, Record<string, number>> = {
     '12. I like to talk about my ideas out loud with others to make them better.': 1.1
   },
   3: {
-    '13. I trust real facts and things I can see more than ideas and theories.': 1.3,
+    '13. I trust real facts and things I can see more than ideas.': 1.3,
     '14. I focus mostly on what is happening right now and practical details.': 1.1,
     '15. I like tasks that have clear, step-by-step instructions.': 0.9,
     '16. I trust my "gut feelings" and sudden ideas when things are complicated.': -1.2,
