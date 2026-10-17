@@ -1,11 +1,3 @@
-// Maximum possible weighted scores for each group (provided constants)
-const MAX_WEIGHTS = {
-  group1: 40.5, // Questions 1–12  → E/I dimension
-  group2: 41.1, // Questions 13–24 → S/N dimension
-  group3: 44.7, // Questions 25–36 → T/F dimension
-  group4: 44.1, // Questions 37–48 → J/P dimension
-};
-
 /**
  * Calculates individual MBTI dimension percentages from 48 weighted questions.
  *
@@ -25,6 +17,23 @@ const MAX_WEIGHTS = {
 const calculator = async (payload) => {
   // Ensure payload is an array
   const questions = Array.isArray(payload) ? payload : Object.values(payload);
+  // Maximum scores come from the request weights; scores range from -3 to 3.
+  const MAX_WEIGHTS = { group1: 0, group2: 0, group3: 0, group4: 0 };
+
+  for (const item of questions) {
+    const questionNumber = parseInt(item.question, 10);
+    const maxScore = Math.abs(item.weight ?? 0) * 3;
+
+    if (questionNumber >= 1 && questionNumber <= 12) {
+      MAX_WEIGHTS.group1 += maxScore;
+    } else if (questionNumber >= 13 && questionNumber <= 24) {
+      MAX_WEIGHTS.group2 += maxScore;
+    } else if (questionNumber >= 25 && questionNumber <= 36) {
+      MAX_WEIGHTS.group3 += maxScore;
+    } else if (questionNumber >= 37 && questionNumber <= 48) {
+      MAX_WEIGHTS.group4 += maxScore;
+    }
+  }
   console.log(questions);
   // Initialise group accumulators
   const groups = { group1: 0, group2: 0, group3: 0, group4: 0 , EorI: "", SorN: "", TorF: "", JorP: ""};
